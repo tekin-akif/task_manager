@@ -1,0 +1,59 @@
+/* overdue.css - Updated styles */
+
+.overdue__title {
+  text-align: center;
+  font-size: 1.75rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+/* Task Row */
+.task-row {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+/* Columns */
+.task-row__index {
+  width: 40px;
+  text-align: center;
+}
+
+.task-row__title {
+  flex: 1;
+  margin: 0 1rem;
+    background: none;
+  border: none;
+  border-radius: 4px;
+  text-align: left;
+  padding: 0.5rem;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.task-row__due {
+  width: 120px;
+  text-align: right;
+}
+
+.task-row__title:hover {
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+/* Add status classes */
+.task-status--late {
+  background-color: #f8d7da;
+  /*border: 1px solid #f5c6cb;    /*when ativated, the height of the row becomes larger than that of planning page*/
+}
+
+.task-status--late:hover {
+  background-color: #f5c6cb;
+}

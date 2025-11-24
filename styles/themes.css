@@ -1,0 +1,17 @@
+burada root adında bir alan variable olarak renkleri fln (değişecek olan şeyleri) sırayla tanımlıyorsun.
+bu senin ana teman olacak. başka tema istediğinde bir ad vererek o bloğu da alta ekleyeceksin. (o blokta sadece
+değişecek olan propertyler olabiliyo; aynı kalanları da ekleyebiliyosun ama gerek yok, onları roottan alırmış zaten)
+
+sonra asıl css dosyalarına gidip orada doğrudan verilmiş olan renk vs özellikleri variable adlarıyla değiştireceksin.
+böylece variable'da ne tanımlandıysa ilgili sayfa onu gösterecek. tema değişikliğinde farklı bir variable tanımlanmış olacak
+pek çok özellik için ve temayı değiştirdiğinde o değerler devreye girecek tek tuşla.
+
+tema değişimi düğmesi olacak. ya da settting olarak bir menü içinde ayarlanabilir. şimdilik bir düğme şeklinde ana sayfaya yerleştir.
+gerekli düzenlemeyi sonra yaparsın. zaten öncelikle tek bir tema olacak. bir de denemek için sadece bir rengin değiştiği bir 
+tema yaparsın, test edersin olayı.
+
+themeToggle.js diye bir dosya olacak. bunda hem son temayı hatırlayan kod hem de tema değişikliğini gerçekleştiren fonksiyon olacak.
+
+şimdi yapacağın, css dosyalarını dolaşıp hangi özelliklerin nereye ait olduğunu anlamak ve hangi özelliklerin tema değişimine konu olacağına
+karar vermek. bunlara verdiğin doğrudan değerleri iptal edip variable değerleri vereceksin.
+o variable'lar da tema variableları dosyasında (themes.css) tanımlaacak. variable isimlerini düzgün anlaşılır şeyler yaparsan güzel ve kolaylık olur.

@@ -1,0 +1,171 @@
+/* calendar.css - Styles for the calendar */
+
+/* Calendar Container */
+.calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.5rem;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Year Header */
+.calendar__year {
+  text-align: center;
+  font-size: 2rem;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+/* Month Section */
+.calendar__month {
+  margin-bottom: 1rem;
+}
+
+/* Month Header */
+.calendar__header {
+  font-size: 2rem;
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+/* Calendar Grid */
+.calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+/* Day Label (Sun, Mon, etc.) */
+.calendar__day-label {
+  text-align: center;
+  font-weight: bold;
+  color: #777;
+  padding: 0.5rem;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+}
+
+/* Day Cell */
+.calendar__day {
+  padding: 0;  /* Remove padding from the day */
+  padding-bottom: 1rem;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-height: 120px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;  /* Ensure content stays within borders */
+}
+
+.calendar__day-header {
+  background-color: #f0f0f0;
+  padding: 2px 4px;
+  font-size: 0.8em;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  font-weight: bold;
+  width: 100%;
+  margin: 0;
+  margin-bottom: 0.25rem;
+  box-sizing: border-box;
+}
+
+/* Add padding to the content area */
+.calendar__day > *:not(.calendar__day-header) {
+  padding: 0.1rem;
+}
+
+/* Task Element - add horizontal margins */
+.calendar__task {
+  display: flex; /* align image and text in a row */
+  align-items: center; /* vertically center items */
+  padding: 0.25rem;
+  /*background-color: #e3f2fd;*/
+  border-radius: 4px;
+  margin: 0rem 0.25rem 0.25rem 0.25rem; 
+  font-size: 0.7rem;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.calendar__task:hover {
+  background-color: #bbdefb;
+}
+
+.calendar__day:hover {
+  background-color: #f0f0f0;
+}
+
+/* Empty Day Cell */
+.calendar__day.--empty {
+  background-color: transparent;
+  border: none;
+  cursor: default;
+}
+
+.calendar__day--today {
+/*  background-color: #fffde7; */
+  border-left: 4px solid #ffd600;
+/*  border: 3px solid #0066cc;  Blue border */
+ /* background-color: rgba(0, 102, 204, 0.1); /* Light blue background
+  box-shadow: 0 0 5px rgba(0, 102, 204, 0.3); /* Subtle glow effect */
+}
+
+.calendar__day--today .calendar__day-header {
+	background-color: #ffd600;
+ /*  font-weight: bold; /*  Bold date text */
+}
+
+/* Due (yellow) */
+.task-status--due {
+  background-color: #fff3cd;
+  border: 1px solid #ffe69b;
+}
+.task-status--due:hover {
+  background-color: #ffe69b;
+}
+
+/* Late (red) */
+.task-status--late {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+}
+.task-status--late:hover {
+  background-color: #f5c6cb;
+}
+
+/* Done (green) */
+.task-status--done {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+}
+.task-status--done:hover {
+  background-color: #c3e6cb;
+}
+
+/* Started (same as due) 
+.task-status--started {
+  background-color: #fff3cd;
+  border: 1px solid #ffe69b;
+}
+.task-status--started:hover {
+  background-color: #ffe69b;
+}*/
+
+.task-type--reminder {
+  background-color: transparent;
+  border: none;
+ 
+  
+}
+.task-type--reminder:hover {
+  background-color: white;
+/*  border: 1px solid #ffe69b; */
+}

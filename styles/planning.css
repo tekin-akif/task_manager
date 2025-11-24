@@ -1,0 +1,49 @@
+ /* REPLACE ALL EXISTING STYLES WITH: */
+.planning__title {
+  text-align: center;
+  font-size: 1.75rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+/* Task Row */
+.task-row {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+/* Columns */
+.task-row__index {
+  width: 40px;
+  text-align: center;
+}
+
+.task-row__title {
+  flex: 1;
+  margin: 0 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0.5rem;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.task-row__title:hover {
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+/* Empty Line */
+.task-row--empty .task-row__title {
+  font-style: italic;
+  color: #999;
+  font-weight: normal;
+}

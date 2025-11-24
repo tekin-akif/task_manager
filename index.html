@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager - Calendar</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/calendar.css">
+  <link rel="stylesheet" href="styles/taskWindow.css">
+  
+</head>
+
+<body>
+  <!-- Header  -->
+  <header class="header">
+	<section class="header__left">
+
+      <h1 class="header__title">Task Manager <span id="yearHead" class="calendar__year"></span></h1>
+	</section>
+    <nav class="header__nav">
+      <ul class="nav__list">
+        <li class="nav__item">
+          <a href="index.html" class="nav__link --active">Calendar</a>
+        </li>
+        <li class="nav__item">
+          <a href="overdue.html" class="nav__link">Overdue</a>
+        </li>
+        <li class="nav__item">
+          <a href="planning.html" class="nav__link">Planning</a>
+        </li>
+		<li class="nav__item">
+          <a href="diary.html" class="nav__link">Diary</a>
+        </li>
+      </ul>
+    </nav>
+	
+	
+<div class="task-stats-container">
+  Done: <span class="done-counter">0</span><br>
+  Due: <span class="due-counter">0</span><br>
+  Late: <span class="late-counter">0</span>
+</div>
+
+
+  </header>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- Calendar Grid -->
+    <div id="calGrid" class="calendar"></div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="scripts/app.js"></script>
+  <script src="scripts/helpers.js"></script>
+  <script src="scripts/calendar.js"></script>
+  <script src="scripts/task.js"></script>
+  <script src="scripts/periodicTask.js"></script>
+  <script src="scripts/taskWindow.js"></script>
+  <script src="scripts/taskConverter.js"></script>
+  <script src="scripts/taskStats.js"></script>
+  <script src="scripts/scrollManager.js"></script>
+</body>
+</html>

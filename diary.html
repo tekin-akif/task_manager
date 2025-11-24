@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager - Diary</title>
+  <link rel="stylesheet" href="styles/main.css">
+  
+  <link rel="stylesheet" href="styles/diary.css"> 
+</head>
+
+<body>
+  <!-- Header  -->
+  <header class="header">
+    <section class="header__left">
+      <h1 class="header__title">Task Manager <span id="yearHead" class="calendar__year"></span></h1>
+    </section>
+    <nav class="header__nav">
+      <ul class="nav__list">
+        <li class="nav__item">
+          <a href="index.html" class="nav__link">Calendar</a>
+        </li>
+        <li class="nav__item">
+          <a href="overdue.html" class="nav__link">Overdue</a>
+        </li>
+        <li class="nav__item">
+          <a href="planning.html" class="nav__link">Planning</a>
+        </li>
+        <li class="nav__item">
+          <a href="diary.html" class="nav__link --active">Diary</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main">
+    <!-- Diary Content Will Go Here -->
+    <div id="diaryContainer" class="diary-container">
+      <!-- Placeholder for diary content -->
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="scripts/app.js"></script>
+  <script src="scripts/diary.js"></script>
+  <script src="scripts/calendar.js"></script>
+  <script src="scripts/speechRecognition.js"></script>
+   
+  <script src="scripts/scrollManager.js"></script>
+</body>
+</html>

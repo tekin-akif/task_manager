@@ -5,18 +5,68 @@
 function generateCalendarData() {
   const today = new Date();
   const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth(); // 0-11
+  const currentDate = today.getDate();
   
-  // Create an array of month objects that includes Dec of previous year and Jan of next year
-  const calendarMonths = [
-    { name: "December", monthIndex: 11, year: currentYear - 1 },
-    ...Array.from({ length: 12 }, (_, i) => ({ 
-      name: ["January", "February", "March", "April", "May", "June", 
-             "July", "August", "September", "October", "November", "December"][i], 
-      monthIndex: i, 
-      year: currentYear 
-    })),
-    { name: "January", monthIndex: 0, year: currentYear + 1 }
-  ];
+  // Get the earliest task date from window.taskStore
+  let startYear, startMonth;
+  
+  if (window.taskStore && Array.isArray(window.taskStore) && window.taskStore.length > 0) {
+    // Filter tasks with valid due dates and find the earliest one
+    const tasksWithDueDates = window.taskStore.filter(task => task.due && task.due.length >= 10);
+    
+    if (tasksWithDueDates.length > 0) {
+      // Find the earliest due date
+      const earliestDateStr = tasksWithDueDates.reduce((earliest, task) => {
+        return (!earliest || task.due < earliest) ? task.due : earliest;
+      }, null);
+      
+      if (earliestDateStr) {
+        // Parse the earliest date (format: "YYYY-MM-DD")
+        const [year, month] = earliestDateStr.split('-').map(num => parseInt(num, 10));
+        startYear = year;
+        startMonth = month - 1; // Convert to 0-based month index
+      } else {
+        // No valid due dates, fall back to current month
+        startYear = currentYear;
+        startMonth = currentMonth;
+      }
+    } else {
+      // No tasks with due dates, fall back to current month
+      startYear = currentYear;
+      startMonth = currentMonth;
+    }
+  } else {
+    // No tasks at all, fall back to current month
+    startYear = currentYear;
+    startMonth = currentMonth;
+  }
+  
+  // Calculate end date: 12 months ahead of current month
+  const endDate = new Date(currentYear, currentMonth + 12, 1);
+  const endYear = endDate.getFullYear();
+  const endMonth = endDate.getMonth(); // 0-11
+  
+  // Generate months from start to end (inclusive)
+  const calendarMonths = [];
+  let current = new Date(startYear, startMonth, 1);
+  const end = new Date(endYear, endMonth, 1);
+  
+  while (current <= end) {
+    const year = current.getFullYear();
+    const monthIndex = current.getMonth();
+    const monthName = ["January", "February", "March", "April", "May", "June",
+                       "July", "August", "September", "October", "November", "December"][monthIndex];
+    
+    calendarMonths.push({ 
+      name: monthName, 
+      monthIndex: monthIndex, 
+      year: year 
+    });
+    
+    // Move to next month
+    current.setMonth(current.getMonth() + 1);
+  }
   
   return { currentYear, calendarMonths };
 }

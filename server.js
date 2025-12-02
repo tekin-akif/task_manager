@@ -41,8 +41,8 @@ const createDataHandler = (filePath, entityName) => {
 
 // Usage for tasks
 const tasksHandler = createDataHandler(
-//  path.join(__dirname, 'data', 'd-tasks.json'), //activate this line for development
-  path.join(__dirname, 'data', 'tasks.json'),    // activate this line for personal use
+//  path.join(__dirname, 'data', 'developer-tasks.json'), //activate this line for development
+  path.join(__dirname, 'data', 'personal-tasks.json'),    // activate this line for personal use
   'tasks'
 );
 app.get('/tasks', tasksHandler.getHandler);

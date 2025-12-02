@@ -146,13 +146,9 @@ function renderCalendarGrid(tasksToRender) {
     // Add month header with year if it's December or January (to clarify the year)
     const monthHeader = document.createElement("h2");
     monthHeader.className = "calendar__header";
-    // Include year in month header for December and January to avoid confusion
-    if (month === "December" && year !== new Date().getFullYear() || 
-        month === "January" && year !== new Date().getFullYear()) {
-      monthHeader.textContent = `${month} ${year}`;
-    } else {
-      monthHeader.textContent = month;
-    }
+
+    monthHeader.textContent = `${month} ${year}`;
+
     monthSection.appendChild(monthHeader);
 
     // Create month grid

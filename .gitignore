@@ -23,3 +23,5 @@ Thumbs.db
 .idea/
 *.suo
 *.ntvs*
+
+/data/personal-tasks.json

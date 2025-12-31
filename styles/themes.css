@@ -1,4 +1,4 @@
-burada root adında bir alan variable olarak renkleri fln (değişecek olan şeyleri) sırayla tanımlıyorsun.
+/*burada root adında bir alan variable olarak renkleri fln (değişecek olan şeyleri) sırayla tanımlıyorsun.
 bu senin ana teman olacak. başka tema istediğinde bir ad vererek o bloğu da alta ekleyeceksin. (o blokta sadece
 değişecek olan propertyler olabiliyo; aynı kalanları da ekleyebiliyosun ama gerek yok, onları roottan alırmış zaten)
 
@@ -14,4 +14,22 @@ themeToggle.js diye bir dosya olacak. bunda hem son temayı hatırlayan kod hem 
 
 şimdi yapacağın, css dosyalarını dolaşıp hangi özelliklerin nereye ait olduğunu anlamak ve hangi özelliklerin tema değişimine konu olacağına
 karar vermek. bunlara verdiğin doğrudan değerleri iptal edip variable değerleri vereceksin.
-o variable'lar da tema variableları dosyasında (themes.css) tanımlaacak. variable isimlerini düzgün anlaşılır şeyler yaparsan güzel ve kolaylık olur.
+o variable'lar da tema variableları dosyasında (themes.css) tanımlanacak. variable isimlerini düzgün anlaşılır şeyler yaparsan güzel ve kolaylık olur.
+*/
+/* ------------------------------------------- */
+/* 1. Default Theme (Light) - Defined in :root */
+/* ------------------------------------------- */
+:root {
+
+--primary-color: #f9f9f9;
+
+}
+
+/* ------------------------------------------- */
+/* 2. Overriding for the Dark Theme            */
+/* ------------------------------------------- */
+body.dark-theme {
+	
+--primary-color: #0cf0f1;   /* deneme amaçlı saçma renk      
+   
+}

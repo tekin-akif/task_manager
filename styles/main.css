@@ -15,7 +15,7 @@ html {
 body {
   font-family: Arial, sans-serif;
   line-height: 1.6;
-  background-color: #f9f9f9;
+  background-color: var(--primary-color);
   color: #333;
   margin-top: calc(1rem * 2 + 48px);
 }

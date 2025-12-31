@@ -4,18 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Task Manager - Calendar</title>
+  <link rel="stylesheet" href="styles/themes.css">
   <link rel="stylesheet" href="styles/main.css">
   <link rel="stylesheet" href="styles/calendar.css">
   <link rel="stylesheet" href="styles/taskWindow.css">
+  <script>
+  
+	//check for saved theme before the body renders
+	//console.log lines for checking if the script here is functional. and it is.
+	const theme = localStorage.getItem('theme');
+	//console.log("script is running");
+	if (theme === 'dark-theme'){
+	//	console.log("current theme is dark");
+		document.documentElement.classList.add('dark-theme');
+		}
+	
+  </script>
   
 </head>
 
-<body>
+<body class="light-theme">
   <!-- Header  -->
   <header class="header">
 	<section class="header__left">
+	
+	  <button onclick="themeSwitch()">Toggle</button>
 
-      <h1 class="header__title">Task Manager <span id="yearHead" class="calendar__year"></span></h1>
+      <h1 class="header__title">Task Manager<span id="yearHead" class="calendar__year"></span></h1>
 	</section>
     <nav class="header__nav">
       <ul class="nav__list">
@@ -61,5 +76,7 @@
   <script src="scripts/taskConverter.js"></script>
   <script src="scripts/taskStats.js"></script>
   <script src="scripts/scrollManager.js"></script>
+  <script src="scripts/themeSwitch.js"></script>
+
 </body>
 </html>

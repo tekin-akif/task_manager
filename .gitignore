@@ -25,3 +25,5 @@ Thumbs.db
 *.ntvs*
 
 /data/personal-tasks.json
+/data/diary-entries.json
+/data/developer-tasks.json

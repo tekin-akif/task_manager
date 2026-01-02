@@ -6,7 +6,7 @@
   flex-direction: column;
   gap: 1rem;
   padding: 0.5rem;
-  background-color: #f5f5f5;
+  background-color: #f5f5f5;                 /* calendar günlerin altında kalan arka plan */  
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -15,7 +15,7 @@
 .calendar__year {
   text-align: center;
   font-size: 2rem;
-  color: #fff;
+  color: #fff;                                /* task managerın yanında yazan yıl rengi. bu yazılar aynı renk olmalı ki şimdi öyle zaten */  
   margin-bottom: 1rem;
 }
 
@@ -27,7 +27,7 @@
 /* Month Header */
 .calendar__header {
   font-size: 2rem;
-  color: #555;
+  color: #555;                                /* calendardaki ay adları */  
   margin-bottom: 1rem;
 }
 
@@ -42,9 +42,9 @@
 .calendar__day-label {
   text-align: center;
   font-weight: bold;
-  color: #777;
+  color: #777;                                    /* her ayın üst satırındaki mon, tue, vs... */  
   padding: 0.5rem;
-  background-color: #e0e0e0;
+  background-color: #e0e0e0;                      /* her ayın üst satırının arkaplanı. mon, tue vs'nin arka planı yani */  
   border-radius: 4px;
 }
 
@@ -52,8 +52,8 @@
 .calendar__day {
   padding: 0;  /* Remove padding from the day */
   padding-bottom: 1rem;
-  background-color: #fff;
-  border: 1px solid #ddd;
+  background-color: #fff;                          /* gün kutuları arka plan. nelerle aynı renk olduğuna dikkat et */  
+  border: 1px solid #ddd;                          /* kutuların çerçevesi. bu da etkili ve önemli bir renk */  
   border-radius: 4px;
   min-height: 120px;
   cursor: pointer;
@@ -64,11 +64,11 @@
 }
 
 .calendar__day-header {
-  background-color: #f0f0f0;
+  background-color: #f0f0f0;                       /* her gün kutucuğunun başlık kısmı arka plan */  
   padding: 2px 4px;
   font-size: 0.8em;
   text-align: center;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;				   /* gün kutusunun başlık kısmını ayıran. kutu çerçevesiyle aynı renk */  
   font-weight: bold;
   width: 100%;
   margin: 0;
@@ -90,64 +90,64 @@
   border-radius: 4px;
   margin: 0rem 0.25rem 0.25rem 0.25rem; 
   font-size: 0.7rem;
-  color: #333;
+  color: #333;                                    /* taskların yazıları */  
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .calendar__task:hover {
-  background-color: #bbdefb;
+  background-color: #bbdefb;                      /* bir şey değişmiyor. taska hover yapınca renk hafif değişiyor halbuki?? */  
 }
 
 .calendar__day:hover {
-  background-color: #f0f0f0;
+  background-color: #f0f0f0;                      /* gün üstüne hover yapınca. calendar day header background ile aynı renk */  
 }
 
 /* Empty Day Cell */
 .calendar__day.--empty {
-  background-color: transparent;
+  background-color: transparent;                  /* ay başlarında haftadaki boş günlerin rengi */  
   border: none;
   cursor: default;
 }
 
 .calendar__day--today {
 /*  background-color: #fffde7; */
-  border-left: 4px solid #ffd600;
+  border-left: 4px solid #ffd600;                 /* bugün için renk değişimi, sadece sol taraf border */  
 /*  border: 3px solid #0066cc;  Blue border */
  /* background-color: rgba(0, 102, 204, 0.1); /* Light blue background
   box-shadow: 0 0 5px rgba(0, 102, 204, 0.3); /* Subtle glow effect */
 }
 
 .calendar__day--today .calendar__day-header {
-	background-color: #ffd600;
+	background-color: #ffd600;                    /* bugünün headerı. bugünün sol taraf borderıyla aynı renk. */  
  /*  font-weight: bold; /*  Bold date text */
 }
 
 /* Due (yellow) */
 .task-status--due {
-  background-color: #fff3cd;
-  border: 1px solid #ffe69b;
+  background-color: #fff3cd;                      /* due durumundaki task arkaplan rengi */  
+  border: 1px solid #ffe69b;                      /* due taskın çerçevesi. backgroundun hafif koyusu olduğuna dikkat */  
 }
 .task-status--due:hover {
-  background-color: #ffe69b;
+  background-color: #ffe69b;                      /* due task hover. çerçeve rengiyle (backgroundun hafif koyusu)aynı olduğuna dikkat */  
 }
 
 /* Late (red) */
 .task-status--late {
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
+  background-color: #f8d7da;                      /* üstteki due task ile aynı özellikler, farklı renkler */  
+  border: 1px solid #f5c6cb;                      /* üstteki due task ile aynı özellikler, farklı renkler */ 
 }
 .task-status--late:hover {
-  background-color: #f5c6cb;
+  background-color: #f5c6cb;                      /* üstteki due task ile aynı özellikler, farklı renkler */ 
 }
 
 /* Done (green) */
 .task-status--done {
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
+  background-color: #d4edda;                      /* üstteki due task ile aynı özellikler, farklı renkler */ 
+  border: 1px solid #c3e6cb;                      /* üstteki due task ile aynı özellikler, farklı renkler */ 
 }
 .task-status--done:hover {
-  background-color: #c3e6cb;
+  background-color: #c3e6cb;                      /* üstteki due task ile aynı özellikler, farklı renkler */ 
 }
 
 /* Started (same as due) 
@@ -160,12 +160,12 @@
 }*/
 
 .task-type--reminder {
-  background-color: transparent;
+  background-color: transparent;                 /* reminder daha özelliksiz, hızlı bir not gibi */ 
   border: none;
  
   
 }
 .task-type--reminder:hover {
-  background-color: white;
+  background-color: white;                       /* reminder daha özelliksiz, hızlı bir not gibi */ 
 /*  border: 1px solid #ffe69b; */
 }

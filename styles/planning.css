@@ -1,8 +1,7 @@
- /* REPLACE ALL EXISTING STYLES WITH: */
 .planning__title {
   text-align: center;
   font-size: 1.75rem;
-  color: #333;
+  color: #333;                                   /* planning tasks yazısı (ana başlık) */
   margin-bottom: 1.5rem;
 }
 
@@ -12,7 +11,7 @@
   align-items: center;
   padding: 1rem;
   margin-bottom: 0.5rem;
-  background-color: #fff;
+  background-color: #fff;                       /* task satırları background */
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   transition: transform 0.2s;
@@ -22,28 +21,29 @@
 .task-row__index {
   width: 40px;
   text-align: center;
+  color: #333;                                  /* index numaraları */ 
 }
 
 .task-row__title {
   flex: 1;
   margin: 0 1rem;
-  background: none;
+  background: none;                             /* rowlarda iç satırlar background */
   border: none;
   text-align: left;
   padding: 0.5rem;
   cursor: pointer;
   font: inherit;
-  color: inherit;
+  color: inherit;                               /* tasklar text rengi */
 }
 
 .task-row__title:hover {
-  background-color: #f8f9fa;
+  background-color: #f8f9fa;                     /* rowlarda iç satırlar hoverda background */
   border-radius: 4px;
 }
 
 /* Empty Line */
 .task-row--empty .task-row__title {
   font-style: italic;
-  color: #999;
+  color: #999;                                   /* click here to... yazısı. hafif soluk olacak. */
   font-weight: normal;
 }

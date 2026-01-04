@@ -1,6 +1,5 @@
-/* diary.css - Styles for the diary page */
+/* Styles for the diary page */
 
-/* Diary container */
 .diary-container {
   width: 100%;
   max-width: 900px;
@@ -8,52 +7,49 @@
   padding: 20px;
 }
 
-/* Diary heading */
 .diary-heading {
   font-size: 1.8rem;
   margin-bottom: 20px;
-  color: #333;
+  color: #333;                                    /* diary yazısı. üst başlık yani. heading yerine title yap, önceki sayfalarla uyuşsun */
   text-align: center;
 }
 
-/* Diary grid */
 .diary-grid {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-/* Diary row */
 .diary-row {
   display: grid;
   grid-template-columns: 120px 1fr;
   gap: 15px;
   padding: 10px;
   border-radius: 6px;
-  background-color: #f9f9f9;
+  background-color: #f9f9f9;                      /* gün gün rowlar, arka plan rengi */
   transition: background-color 0.2s ease;
 }
 
 .diary-row:hover {
-  background-color: #f0f0f0;
+  background-color: #f0f0f0;                      /* gün gün rowlar, hoverda arka plan rengi */
 }
 
 .diary-row--today {
-  background-color: #ffd600;
-  border-left: 4px solid #ffd600;
-  border-top: 4px solid #ffd600;
+  background-color: #ffd600;                      /* sadece bugün. kötü bir sarı. düzgün bi renk bulmalı. calendar'da da aynı renk olmalı */
+  border-left: 4px solid #ffd600;                 /* bugün, üsttekiyle aynı ama uyumlu farklı bir renk olabilir */
+  border-top: 4px solid #ffd600;                  /* bugün, üsttekiyle aynı ama uyumlu farklı bir renk olabilir*/
 }
 
-/*.diary-row--today:hover {
-  background-color: #fff9c4;
-}*/
+.diary-row--today:hover {
+  background-color: #a23;                         /* bugünün hover durumu. bugün rengiyle uyumlu, hafif koyusu gibi bir şey olmalı */
+}
 
 /* Date cell */
 .diary-row__date {
   font-weight: 500;
   display: flex;
   align-items: center;
-  color: #555;
+  color: #333;                                    /* rowlarda soldaki tarih */
 }
 
 /* Entry cell */
@@ -61,7 +57,6 @@
   flex: 1;
 }
 
-/* Textarea for diary entries */
 .diary-entry__textarea {
   width: 100%;
   min-height: 60px;
@@ -77,12 +72,12 @@
 
 .diary-entry__textarea:focus {
   outline: none;
-  border-color: #2196f3;
+  border-color: #2196f3;                           /* sadece seçili text areanın borderı. imleç ordayken. kalın olsa etkili olabilir */
   box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
 }
 
 .diary-entry__textarea::placeholder {
-  color: #aaa;
+  color: #999;                                     /* boş günlerdeki, write your diary entry here yazısının rengi */
 }
 
 /* Responsive adjustments */
@@ -120,19 +115,19 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
+  background-color: #f5f5f5;                  /* sağdaki mikrofon yuvarlağı */
+  border: 1px solid #ddd;                     /* mikrofon yuvarlağı border çemberi */
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
   padding: 0;
-  color: #555;
+  color: #555;                                /* mikrofonun kendi şekli */
 }
 
 .mic-button:hover {
-  background-color: #e9e9e9;
+  background-color: #e9e9e9;                 /*  mikrofon yuvarlağı hover */
 }
 
 .mic-button:focus {
@@ -142,13 +137,13 @@
 
 /* Active microphone state */
 .mic-button.mic-active {
-  background-color: #ff4081;
-  border-color: #ff4081;
-  color: white;
+  background-color: #ff4081;                          /* mikrofon aktifken */
+  border-color: #ff4081;                              /* mikrofon aktifken */
+  color: white;                                       /* mikrofon aktifken */
   animation: pulse 1.5s infinite;
 }
 
-/* Pulse animation for active recording */
+/* Pulse animation for active recording */             /* buradan aşağısı sırf mikrofonla ilgili, ayrıca bakılır */
 @keyframes pulse {
   0% {
     box-shadow: 0 0 0 0 rgba(255, 64, 129, 0.4);

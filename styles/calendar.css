@@ -50,7 +50,7 @@
 
 /* Day Cell */
 .calendar__day {
-  padding: 0;  /* Remove padding from the day */
+  padding: 0;  
   padding-bottom: 1rem;
   background-color: #fff;                          /* gün kutuları arka plan. nelerle aynı renk olduğuna dikkat et */  
   border: 1px solid #ddd;                          /* kutuların çerçevesi. bu da etkili ve önemli bir renk */  
@@ -60,7 +60,7 @@
   transition: background-color 0.2s;
   display: flex;
   flex-direction: column;
-  overflow: hidden;  /* Ensure content stays within borders */
+  overflow: hidden;
 }
 
 .calendar__day-header {
@@ -83,10 +83,9 @@
 
 /* Task Element - add horizontal margins */
 .calendar__task {
-  display: flex; /* align image and text in a row */
-  align-items: center; /* vertically center items */
+  display: flex; 
+  align-items: center; 
   padding: 0.25rem;
-  /*background-color: #e3f2fd;*/
   border-radius: 4px;
   margin: 0rem 0.25rem 0.25rem 0.25rem; 
   font-size: 0.7rem;
@@ -120,10 +119,9 @@
 
 .calendar__day--today .calendar__day-header {
 	background-color: #ffd600;                    /* bugünün headerı. bugünün sol taraf borderıyla aynı renk. */  
- /*  font-weight: bold; /*  Bold date text */
 }
 
-/* Due (yellow) */
+/* Due (yellowish) */
 .task-status--due {
   background-color: #fff3cd;                      /* due durumundaki task arkaplan rengi */  
   border: 1px solid #ffe69b;                      /* due taskın çerçevesi. backgroundun hafif koyusu olduğuna dikkat */  
@@ -132,7 +130,7 @@
   background-color: #ffe69b;                      /* due task hover. çerçeve rengiyle (backgroundun hafif koyusu)aynı olduğuna dikkat */  
 }
 
-/* Late (red) */
+/* Late (reddish) */
 .task-status--late {
   background-color: #f8d7da;                      /* üstteki due task ile aynı özellikler, farklı renkler */  
   border: 1px solid #f5c6cb;                      /* üstteki due task ile aynı özellikler, farklı renkler */ 
@@ -141,7 +139,7 @@
   background-color: #f5c6cb;                      /* üstteki due task ile aynı özellikler, farklı renkler */ 
 }
 
-/* Done (green) */
+/* Done (greenish) */
 .task-status--done {
   background-color: #d4edda;                      /* üstteki due task ile aynı özellikler, farklı renkler */ 
   border: 1px solid #c3e6cb;                      /* üstteki due task ile aynı özellikler, farklı renkler */ 
@@ -150,22 +148,12 @@
   background-color: #c3e6cb;                      /* üstteki due task ile aynı özellikler, farklı renkler */ 
 }
 
-/* Started (same as due) 
-.task-status--started {
-  background-color: #fff3cd;
-  border: 1px solid #ffe69b;
-}
-.task-status--started:hover {
-  background-color: #ffe69b;
-}*/
 
 .task-type--reminder {
   background-color: transparent;                 /* reminder daha özelliksiz, hızlı bir not gibi */ 
-  border: none;
- 
+  border: none; 
   
 }
 .task-type--reminder:hover {
   background-color: white;                       /* reminder daha özelliksiz, hızlı bir not gibi */ 
-/*  border: 1px solid #ffe69b; */
 }

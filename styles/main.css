@@ -1,8 +1,6 @@
 /* main.css - Global styles for the Task Manager */
 
-/* Reset and Basic Styles */
-
-/* this html/overflow part added to force a scrollbar into all pages to prevent visual shift when navigating between pages*/
+/* force a scrollbar into all pages to prevent visual shift between pages*/
 html {
     overflow-y: scroll;   
 }
@@ -37,9 +35,9 @@ body {
 
 .header__left, .header__nav { 
   display: flex;
-  align-items: center; /* Centers vertically */
-  justify-content: center; /* Centers horizontally */
-  flex: 1; /* Ensures both parts take up equal space */
+  align-items: center; 
+  justify-content: center; 
+  flex: 1; 
 }
 
 .header__title {
@@ -164,15 +162,13 @@ body {
 .task-icon {
   height: 0.8rem;
   width: auto;
-/*  vertical-align: middle;*/
   margin-right: 0.15rem;
-  align-self: flex-start; /* 👈 This is the key */
-  margin-top: 0.1rem;    /* optional tweak to fine-tune alignment */
+  align-self: flex-start; 
+  margin-top: 0.1rem;    
 }
 
 .task-stats-container {
-  position: fixed; /* Sticks to a fixed position on the screen */
-  /* top: 20px;       /* Distance from top of the screen */
+  position: fixed;
   right: 10px;     
   width: 90px;
   padding: 5px;
@@ -181,5 +177,5 @@ body {
   border-radius: 4px;
   
   font-size: 0.9em;
-  z-index: 9999; /* Ensures it's on top */
+  z-index: 9999; 
 }

@@ -2,9 +2,9 @@
 
 .diary-container {
   width: 100%;
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  /*padding: 20px;*/
 }
 
 .diary-heading {
@@ -70,14 +70,17 @@
   font-family: inherit;
   font-size: 0.95rem;
   line-height: 1.5;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, filter 0.5s ease;
   resize: vertical;
+  filter: blur(4px);
+
 }
 
 .diary-entry__textarea:focus {
   outline: none;
   border-color: var(--today-color); /* #2196f3;           /* sadece seçili text areanın borderı. imleç ordayken. kalın olsa etkili olabilir */
   box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);    /* shadow mavimsi bi renk. bunu da border colora benzer hale getirmeli*/
+  filter: blur(0);
 }
 
 .diary-entry__textarea::placeholder {

@@ -10,7 +10,7 @@
 .diary-heading {
   font-size: 1.8rem;
   margin-bottom: 20px;
-  color: #333;                                    /* diary yazısı. üst başlık yani. heading yerine title yap, önceki sayfalarla uyuşsun */
+  color: var(--page-titles-color); /* #333;      /* diary yazısı. üst başlık yani. heading yerine title yap, önceki sayfalarla uyuşsun */
   text-align: center;
 }
 
@@ -26,30 +26,33 @@
   gap: 15px;
   padding: 10px;
   border-radius: 6px;
-  background-color: #f9f9f9;                      /* gün gün rowlar, arka plan rengi */
+  background-color: var(--cal-background-color); /* #f9f9f9;                      /* gün gün rowlar, arka plan rengi */
   transition: background-color 0.2s ease;
 }
-
+/*
 .diary-row:hover {
-  background-color: #f0f0f0;                      /* gün gün rowlar, hoverda arka plan rengi */
-}
-
+  background-color: var(--day-head-background); /*#f0f0f0;              /* gün gün rowlar, hoverda arka plan rengi 
+}                                                                       rowlarda hovera ne gerek var. tıklanan biyer değil ki.
+*/
 .diary-row--today {
-  background-color: #ffd600;                      /* sadece bugün. kötü bir sarı. düzgün bi renk bulmalı. calendar'da da aynı renk olmalı */
-  border-left: 4px solid #ffd600;                 /* bugün, üsttekiyle aynı ama uyumlu farklı bir renk olabilir */
-  border-top: 4px solid #ffd600;                  /* bugün, üsttekiyle aynı ama uyumlu farklı bir renk olabilir*/
+  background-color: var(--today-color);           /* sadece bugün. kötü bir sarı. düzgün bi renk bulmalı. calendar'da da aynı renk olmalı */
+  border-left: 4px solid var(--today-color);                /* bugün, üsttekiyle aynı ama uyumlu farklı bir renk olabilir */
+  border-top: 4px solid var(--today-color);                 /* bugün, üsttekiyle aynı ama uyumlu farklı bir renk olabilir*/
 }
-
+/*
 .diary-row--today:hover {
-  background-color: #a23;                         /* bugünün hover durumu. bugün rengiyle uyumlu, hafif koyusu gibi bir şey olmalı */
-}
+  background-color: #a23;                         /* bugünün hover durumu. bugün rengiyle uyumlu, hafif koyusu gibi bir şey olmalı
+                                                  burada da hover rengi iptal. hiç gereği yok.  
+}*/
+
+
 
 /* Date cell */
 .diary-row__date {
   font-weight: 500;
   display: flex;
   align-items: center;
-  color: #333;                                    /* rowlarda soldaki tarih */
+  color: var(--task-title-color); /*#333;                                    /* rowlarda soldaki tarih */
 }
 
 /* Entry cell */
@@ -63,6 +66,7 @@
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  color: var(--task-title-color);
   font-family: inherit;
   font-size: 0.95rem;
   line-height: 1.5;
@@ -72,12 +76,14 @@
 
 .diary-entry__textarea:focus {
   outline: none;
-  border-color: #2196f3;                           /* sadece seçili text areanın borderı. imleç ordayken. kalın olsa etkili olabilir */
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+  border-color: var(--today-color); /* #2196f3;           /* sadece seçili text areanın borderı. imleç ordayken. kalın olsa etkili olabilir */
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);    /* shadow mavimsi bi renk. bunu da border colora benzer hale getirmeli*/
 }
 
 .diary-entry__textarea::placeholder {
-  color: #999;                                     /* boş günlerdeki, write your diary entry here yazısının rengi */
+  font-style: italic;
+  color: var(--placeholder-text); /*#999;                       /* boş günlerdeki, write your diary entry here yazısının rengi */
+                                                              /* bunun fontu güzel değil. plannigdeki placeholderla aynı yap*/
 }
 
 /* Responsive adjustments */

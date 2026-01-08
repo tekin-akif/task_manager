@@ -1,27 +1,60 @@
-/*burada root adında bir alan variable olarak renkleri fln (değişecek olan şeyleri) sırayla tanımlıyorsun.
-bu senin ana teman olacak. başka tema istediğinde bir ad vererek o bloğu da alta ekleyeceksin. (o blokta sadece
-değişecek olan propertyler olabiliyo; aynı kalanları da ekleyebiliyosun ama gerek yok, onları roottan alırmış zaten)
 
-sonra asıl css dosyalarına gidip orada doğrudan verilmiş olan renk vs özellikleri variable adlarıyla değiştireceksin.
-böylece variable'da ne tanımlandıysa ilgili sayfa onu gösterecek. tema değişikliğinde farklı bir variable tanımlanmış olacak
-pek çok özellik için ve temayı değiştirdiğinde o değerler devreye girecek tek tuşla.
+/* bu işi yaparken aşağıda başladığım gibi her ögeyi ayrı ayrı uygun adla variable yapmak bir uçta, primary color secondary color
+gibi kodlama yaparak yapmak diğer uçtaymış. en iyisi, ikisinin arası gibi olan layerlı falan bir sistemmiş (three tier system). 
+ben öncelikle bu başladığım şekilde tamamını bitireceğim ve gpt'den palet hazırlamasını isteyecek düzeye getireceğim.
+bu ölçekteki bir projede bu sistem de çalışır bence. sonra gerekirse tier sistemine geçirmesini de isteyebilirim gpt'den.
 
-tema değişimi düğmesi olacak. ya da settting olarak bir menü içinde ayarlanabilir. şimdilik bir düğme şeklinde ana sayfaya yerleştir.
-gerekli düzenlemeyi sonra yaparsın. zaten öncelikle tek bir tema olacak. bir de denemek için sadece bir rengin değiştiği bir 
-tema yaparsın, test edersin olayı.
+light, dark, summer, winter temaları için palet istenebilir gpt'lerden. ve border kalınlığı da biraz sıcaklık katabiliyor
+görsele. border kalınlıkları ve fontları da ekleyebilirsin ileride tema değişimlerine. 
+aslında rage, funny, desperate, sorry vesaire duygularla da ilişkili pek çok skin/tema olması kullanıcılara hoş gelebilir.
+nasılsa gpt'den palet isteyeceksin. bol bol olsun daha iyi. hatta temalar da tematik olabilir. hem dark, light, hem de summer, sorry
+falan gibi alakasız şeyler yerine tüm temalar insan duygularıyla ilişkili planlanabilir. düşünülebilir bu konu.
 
-themeToggle.js diye bir dosya olacak. bunda hem son temayı hatırlayan kod hem de tema değişikliğini gerçekleştiren fonksiyon olacak.
+***üçlü ve beşli renk sistemleri incompatable. hepsini aynılaştırt gpt'ye. (compatible olabilir ama yine de aynılaştırt)
 
-şimdi yapacağın, css dosyalarını dolaşıp hangi özelliklerin nereye ait olduğunu anlamak ve hangi özelliklerin tema değişimine konu olacağına
-karar vermek. bunlara verdiğin doğrudan değerleri iptal edip variable değerleri vereceksin.
-o variable'lar da tema variableları dosyasında (themes.css) tanımlanacak. variable isimlerini düzgün anlaşılır şeyler yaparsan güzel ve kolaylık olur.
-*/
+***aga tüm app'de bir font optimizasyonu yapman lazım zaten. temalara dahil olsa da olmasa da.
+
+ */
+
+
+
 /* ------------------------------------------- */
 /* 1. Default Theme (Light) - Defined in :root */
 /* ------------------------------------------- */
 :root {
 
---primary-color: #f9f9f9;
+--body-background-color: #f9f9f9;
+--header-background-color: #333;
+--header-text-color: #fff;
+--nav-buttons-title: #fff;
+--nav-buttons-hov: #555;
+--nav-buttons-active: #1976d2;
+--stats-cont-background: #fff176;
+--page-titles-color: #333;
+--cal-year-title: #fff;
+--cal-background-color: #f5f5f5;
+--cal-month-header: #555;
+--cal-day-label: #777;
+--day-label-background: #e0e0e0;
+--day-cell-background: #fff;
+--day-cell-border: #ddd;
+--day-head-background: #f0f0f0;
+--task-title-color: #333;
+--today-color: #ffd600;
+--due-task-background: #fff3cd;
+--due-task-border: #ffe69b;
+--late-task-background: #f8d7da;
+--late-task-border: #f5c6cb;
+--done-task-background: #d4edda;
+--done-task-border: #c3e6cb;
+--placeholder-text: #999;
+--del-button-background: #ff4444;
+--del-button-text: white;
+--save-button-background: #1976d2;
+--save-button-text: white;
+--cancel-button-background: #757575;
+--cancel-button-text: white;
+--disabled-area: #f0f0f0;
 
 }
 
@@ -30,6 +63,38 @@ o variable'lar da tema variableları dosyasında (themes.css) tanımlanacak. var
 /* ------------------------------------------- */
 body.dark-theme {
 	
---primary-color: #0cf0f1;   /* deneme amaçlı saçma renk      
+--body-background-color: #0cf0f1;   /* deneme amaçlı saçma renkler */
+--header-background-color: #a23; 
+--header-text-color: #b33;
+--nav-buttons-title: #ccc;
+--nav-buttons-hov: #123;
+--nav-buttons-active: #909;
+--stats-cont-background: #9bb;
+--page-titles-color: #f23;  
+--cal-year-title: #444;
+--cal-background-color: #5f5; 
+--cal-month-header: #a99;
+--cal-day-label: #ccc;
+--day-label-background: #9c9;
+--day-cell-background: #bcd;
+--day-cell-border: #a23;
+--day-head-background: #5f5f5f;
+--task-title-color: #a23;
+--today-color: #600dca;
+--due-task-background: #3d3d3d;
+--due-task-border: #000000;
+--late-task-background: #b2b1b3;
+--late-task-border: #000000;
+--done-task-background: #5a4a3a;
+--done-task-border: #000000;
+--placeholder-text: #a25;
+--del-button-background: #cc1111;
+--del-button-text: black;
+--save-button-background: #cc1111;
+--save-button-text: pink;
+--cancel-button-background: #11bbbb;
+--cancel-button-text: brown;
+--disabled-area: #82cd82;
+
    
 }

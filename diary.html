@@ -4,15 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Task Manager - Diary</title>
+    <link rel="stylesheet" href="styles/themes.css">
+
   <link rel="stylesheet" href="styles/main.css">
   
   <link rel="stylesheet" href="styles/diary.css"> 
 </head>
 
-<body>
+<body class="light-theme">
   <!-- Header  -->
   <header class="header">
     <section class="header__left">
+	  <button onclick="themeSwitch()">Theme</button>
       <h1 class="header__title">Task Manager <span id="yearHead" class="calendar__year"></span></h1>
     </section>
     <nav class="header__nav">
@@ -48,5 +51,7 @@
   <script src="scripts/speechRecognition.js"></script>
    
   <script src="scripts/scrollManager.js"></script>
+    <script src="scripts/themeSwitch.js"></script>
+
 </body>
 </html>

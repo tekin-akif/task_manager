@@ -3,7 +3,7 @@
 .overdue__title {
   text-align: center;
   font-size: 1.75rem;
-  color: #333;                                   /* overdue tasks yazan asıl başlık */ 
+  color: var(--page-titles-color); /* #333;             /* overdue tasks yazan asıl başlık */ 
   margin-bottom: 1.5rem;
 }
 
@@ -13,7 +13,7 @@
   align-items: center;
   padding: 1rem;
   margin-bottom: 0.5rem;
-  background-color: #fff;                        /* satırların arka planı ama satır satır bu da */
+  background-color: var(--cal-background-color);/* #fff;         /* satırların arka planı ama satır satır bu da */
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   transition: transform 0.2s;
@@ -23,7 +23,7 @@
 .task-row__index {
   width: 40px;
   text-align: center;
-  color: #333;                                  /* index numaraları */
+  color: var(--task-title-color); /* #333;                                  /* index numaraları */
 }
 
 .task-row__title {
@@ -36,12 +36,12 @@
   padding: 0.5rem;
   cursor: pointer;
   font: inherit;
-  color: inherit;                               /* task adlarının text rengi, index no ve tarih dahil değil */
+  color: var(--task-title-color); /*inherit;                    /* task adlarının text rengi, index no ve tarih dahil değil */
 }
 
 .task-row__due {                                 /* due date bu. due task değil. rowlarda sağdaki tarih kısmı için */
   width: 120px;
-  color: #333;                                   /* due date text rengi */
+  color: var(--task-title-color); /*#333;                                   /* due date text rengi */
   text-align: right;
 }
 
@@ -52,9 +52,9 @@
 
 /* Add status classes */
 .task-status--late {
-  background-color: #f8d7da;                      /*işte bu taskların yazdığı renkli satır içinin background rengi  */
+  background-color: var(--late-task-background); /* #f8d7da;      /*işte bu taskların yazdığı renkli satır içinin background rengi  */
 }
 
 .task-status--late:hover {
-  background-color: #f5c6cb;                      /* taskların yazdığı renkli satır içinin hoverdaki background rengi */
+  background-color: var(--late-task-border);/* #f5c6cb;          /* taskların yazdığı renkli satır içinin hoverdaki background rengi */
 }

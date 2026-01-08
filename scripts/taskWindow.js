@@ -39,7 +39,7 @@ class TaskWindow {
       <option value="periodic task">Periodic Task</option>
       <option value="reminder">Reminder</option>
     `;
-    this.titleInput.placeholder = "Title*";
+    this.titleInput.placeholder = "Title";
     this.descInput.placeholder = "Description";
     this.dateInput.type = "date";
     this.deleteBtn.textContent = "Delete";
@@ -58,7 +58,7 @@ class TaskWindow {
     // Form structure
     this.form.appendChild(this.taskIdInput);
     this.form.appendChild(this.createFormGroup("Task Type", this.typeSelect));
-    this.form.appendChild(this.createFormGroup("Title*", this.titleInput));
+    this.form.appendChild(this.createFormGroup("Title", this.titleInput));
     this.form.appendChild(this.createFormGroup("Description", this.descInput));
     
     const dateGroup = document.createElement("div");

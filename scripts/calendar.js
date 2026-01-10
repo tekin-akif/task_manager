@@ -1,6 +1,5 @@
-// calendar.js - Handles calendar rendering and interactions
+// Handles calendar rendering and interactions
 
-// Constants
 // Replace the fixed YEAR and MONTHS with a more dynamic approach
 function generateCalendarData() {
   const today = new Date();
@@ -70,6 +69,7 @@ function generateCalendarData() {
   
   return { currentYear, calendarMonths };
 }
+
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 // Define icon paths in one place (could be moved to a constants section)
@@ -98,7 +98,6 @@ function initCalendar() {
 }
 
 // Render the year header
-
 function renderYearHeader() {
   const today = new Date();
   const currentYear = today.getFullYear();
@@ -143,7 +142,7 @@ function renderCalendarGrid(tasksToRender) {
     const monthSection = document.createElement("div");
     monthSection.className = "calendar__month";
 
-    // Add month header with year if it's December or January (to clarify the year)
+    // Add month header with year if it's December or January (to clarify the year) ---değiştirildi, bu eski sistemdi
     const monthHeader = document.createElement("h2");
     monthHeader.className = "calendar__header";
 

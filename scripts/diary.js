@@ -1,4 +1,4 @@
-// diary.js - Handles diary functionality
+// Handles diary functionality
 
 // DOM Elements
 const diaryContainer = document.getElementById("diaryContainer");

@@ -1,0 +1,48 @@
+-periodic taskların eksiklikleri giderilecek. frekans yerine task sayısı kullanımına geçilecek. 
+
+-diary'de render edilecek girdiler son 7 gün haricinde sadece girdi olan günler şeklinde düzenlenecek.
+son 7 gün, girdiye izin verecek şekilde yine görüntülenecek. ama daha öncesinde boş geçilen günlere
+girdi yapma imkanı kalmayacak.
+
+-diary'de entryler için bir window olmalı mı. yoksa son gün büyütülerek mi çözüm aranmalı. veya focus olan 
+textarea bir hangisi olursa olsun büyümeli mi?
+
+-search fasilitesi eklenecek. başlıklarda ve içerikte arama yapma ayrı seçenekler şeklinde seçenekler 
+olabilir. günlük dahil tüm sayfalarda arama özelliği olmalı. voice to text özelliği ile ilgili, sesli
+arama da pratik ve güzel olabilir mi?
+
+-tasklar için kendi ses dosyası olan bir alarm sistemi opsiyonu olmalı. telefon alarmıyla ilgisi olmaması
+yönünde düşünüyorum. due gününde belli bir saat için kurulabilecek. hatırlatma alarmı yeterli, erteleme fln
+gerek yok o kadar.
+
+-temalar tamamlanacak. ayarlar menüsüne eklenecek.
+
+-bir ayarlar menüsü olmalı. temalar menüsü de buna dahil olmalı.
+
+-calendar için drag-and-drop özelliği taskları günler arasında sürükleyerek taşımaya imkan vermeli.
+bu şekilde takvimin farklı noktalarına scroll durumu nasıl halledilebilir gpt'ye danış.
+
+-diary voice to text özelliği geliştirilip iyi hale getirilecek. aslında tüm girdiler için voice to text
+özelliği güzel olabilir. task windowda mesela başlık olarak ve desc olarak girdi yaparken oraya tıuklayıp
+konuşmak yeterli olsa. tarihler nasıl olsa takvimden seçilebiliyor. sesli arama da olabilir mi?
+
+-kullanıcı girişi, farklı cihazlardan kullanım, cihaz tanıma, session mantığı konuları araştırılıp
+öğrenilecek. ona göre önden planlamayla girişmek lazım.
+
+-user help modu gibi bir düşüncem var. bu mod aktive olduğunda kullanıcı bir ögeyle ilgili bir işarete
+tıklayarak ne amaçla o ögenin var olduğunu ve nasıl kullanılacağını basitçe anlatan tutorial metinleri 
+ekrana gelecek.
+
+-dil desteği ve farklı diller seçenekleri nasıl oluyormuş biraz ön bilgi al gpt'den. sonra da planla.
+
+-iş 'done' yapıldığında done tarihine mi taşınmalı. veya due tarihinde kalıp, done tarihini belirten ayrı
+bir bilgi mi eklenmeli. mesela description otomatik bir cümle eklenmesi gibi: "done on 23.10.2026" gibi?
+
+-css ve temalarla ilgili bir özellik nedeniyle sayfa değişimlerinde ve/veya tema değişimlerinde göz kırpma
+gibi bir render sırası problemi oluyormuş, tema muhabbetini sorarken ai söylediydi. benim app'te de oluyor.
+bunu da tekrar sorup düzeltmek gerek.
+
+-tasklar için toplu silme özelliği de gerekebilir. mesela tarih aralığı ile olabilir.
+
+-bir noktada son kullanıcıymış gibi artık vernik denebilecek ayarlamaları yapmak lazım. mesela her işlem
+için uygun "emin misiniz" türünden tepkiler gibi.

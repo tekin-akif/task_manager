@@ -7,10 +7,10 @@
   /*padding: 20px;*/
 }
 
-.diary-heading {
+.diary-title {
   font-size: 1.8rem;
   margin-bottom: 20px;
-  color: var(--page-titles-color); /* #333;      /* diary yazısı. üst başlık yani. heading yerine title yap, önceki sayfalarla uyuşsun */
+  color: var(--page-titles-color); /* #333;      /* diary yazısı. üst başlık yani */
   text-align: center;
 }
 

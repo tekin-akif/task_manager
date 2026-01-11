@@ -83,11 +83,11 @@ function renderDiaryDays() {
   const today = getAdjustedToday();
   const currentYear = today.getFullYear();
   
-  // Create heading for the diary
-  const heading = document.createElement('h2');
-  heading.className = 'diary-heading';
-  heading.textContent = `Diary`;
-  diaryContainer.appendChild(heading);
+  // Create title for the diary
+  const title = document.createElement('h2');
+  title.className = 'diary-title';
+  title.textContent = `Diary`;
+  diaryContainer.appendChild(title);
   
   // Create diary grid
   const diaryGrid = document.createElement('div');

@@ -83,6 +83,21 @@ function renderDiaryDays() {
   const today = getAdjustedToday();
   const currentYear = today.getFullYear();
   
+ //*********************************************************************************çalışma alanı
+  
+//  const currentDate = new Date();
+  
+//  const lastWeek = getOffsetDate(today, -7);
+  
+ // aWeekAgo = date.setDate(date.getDate() - 7);
+  
+//  console.log(currentDate);
+//  console.log(lastWeek);
+//  console.log(currentYear);
+ 
+ //********************************************************************************* çalışma alanı
+  
+  
   // Create title for the diary
   const title = document.createElement('h2');
   title.className = 'diary-title';
@@ -101,6 +116,9 @@ function renderDiaryDays() {
   // 1. Add December of previous year (from Dec 1 up to Dec 31)
   const prevDecemberStart = new Date(currentYear - 1, 11, 1); // Dec 1 of previous year
   const prevDecEnd = new Date(currentYear - 1, 11, 31);       // Dec 31 of previous year
+  
+
+  
   
   // Only add previous December if today's date is later than Dec 1
   if (today >= prevDecemberStart) {
@@ -128,10 +146,16 @@ function renderDiaryDays() {
   
   // Reverse the array to display most recent first (today at the top)
   datesToDisplay.reverse();
+ 
+  // bu actualToday günün tarihini uygun formatta alıp geçen haftaya dönmek için
+//  const actualToday = formatDateKey(today);
+	const lastWeek = formatLastWeek(today);
   
   // Create a row for each day
   for (const currentDate of datesToDisplay) {
     const dateKey = formatDateKey(currentDate);
+//	console.log(dateKey);
+//	console.log(lastWeek);
     const dateDisplay = formatDateDisplay(currentDate);
     
     const dayRow = document.createElement('div');
@@ -167,7 +191,7 @@ function renderDiaryDays() {
     // Find entry for this date
     const existingEntry = getDiaryEntryByDate(dateKey);
     entryTextarea.value = existingEntry ? existingEntry.diaryEntry : '';
-    entryTextarea.dataset.date = dateKey;
+    entryTextarea.dataset.date = dateKey;	
     
     // Add the textarea to the entry cell
     entryCell.appendChild(entryTextarea);
@@ -175,9 +199,21 @@ function renderDiaryDays() {
     // Add cells to the row
     dayRow.appendChild(dateCell);
     dayRow.appendChild(entryCell);
-    
-    // Add row to the grid
-    diaryGrid.appendChild(dayRow);
+
+    //************************************************************************çalışma alanı
+    // Add row to the grid *****bu if'i ben ekledim. burada koşul olarak date ve value sorgusu yaptırırsan tek kalemde bütün iş hallolacak 
+	                                // ve geriye sadece start date'i ilk entryden başlatmak kalacak.
+	if (dateKey < lastWeek) {		//	burada ilgili entrynin storage key'i tarihle karşılaştırılacak. tarih aynı formata getirilmeli														
+		if (entryTextarea.value){           // aşağıda format date key falan functionları var. onları anlarsan olacak 
+//		if (dateKey > lastWeek) {
+			diaryGrid.appendChild(dayRow);  //zaten formatdatekey fonksiyonu döngünün başında kullanılıyor.
+		}	                                // entrynin keyini alıp karşılaştırsan yetecek
+	} else {
+		diaryGrid.appendChild(dayRow);		
+	}
+	
+//******************************************************************çalışma alanı
+	
   }
   
   // Setup autosave after rendering
@@ -224,6 +260,11 @@ function getAdjustedToday() {
 // Format date for storage key: YYYY-MM-DD
 function formatDateKey(date) {
   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+}
+
+// Format date of 8 days ago to set it critical date in the if logic: YYYY-MM-DD
+function formatLastWeek(date) {
+	  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${(date.getDate() - 6).toString().padStart(2, '0')}`;
 }
 
 // Format date for display: Mon, Jan 1

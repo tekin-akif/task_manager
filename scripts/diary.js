@@ -50,7 +50,27 @@ window.saveDiaryEntries = async (entries) => {
 
 // Get diary entry by date
 function getDiaryEntryByDate(dateKey) {
-  return diaryEntries.find(entry => entry.diaryEntryDate === dateKey);
+  return (diaryEntries.find(entry => entry.diaryEntryDate === dateKey));
+
+}
+
+// diary sayfasında görüntülenecek olan tarihleri tespit edip ilgili array'e (datesToDisplay) ekleyen fonksiyon
+function getDates(day, array) {
+
+	const lastWeek = formatLastWeek(day);
+	const allDates = diaryEntries.map(entry => entry.diaryEntryDate);
+	const aWeekAgo = allDates.filter(item => item < lastWeek);
+	const aWeekAgoSorted = aWeekAgo.sort((a,b) => new Date(a) - new Date(b));
+	const sortedRealDates = aWeekAgoSorted.map(entry => array.push(new Date(entry)));
+	
+	const a = new Date();	
+	let b = new Date();
+	b.setDate(b.getDate() - 6);
+	console.log(b);	
+	while (b<=a) {
+		array.push(new Date(b));
+		b.setDate(b.getDate()+1);
+	}	
 }
 
 // Update or create diary entry
@@ -82,22 +102,7 @@ function renderDiaryDays() {
   
   const today = getAdjustedToday();
   const currentYear = today.getFullYear();
-  
- //*********************************************************************************çalışma alanı
-  
-//  const currentDate = new Date();
-  
-//  const lastWeek = getOffsetDate(today, -7);
-  
- // aWeekAgo = date.setDate(date.getDate() - 7);
-  
-//  console.log(currentDate);
-//  console.log(lastWeek);
-//  console.log(currentYear);
- 
- //********************************************************************************* çalışma alanı
-  
-  
+
   // Create title for the diary
   const title = document.createElement('h2');
   title.className = 'diary-title';
@@ -109,53 +114,20 @@ function renderDiaryDays() {
   diaryGrid.className = 'diary-grid';
   diaryGrid.id = 'diaryGrid';
   diaryContainer.appendChild(diaryGrid);
-  
+
   // Collect all dates we need to display (in chronological order)
   const datesToDisplay = [];
-  
-  // 1. Add December of previous year (from Dec 1 up to Dec 31)
-  const prevDecemberStart = new Date(currentYear - 1, 11, 1); // Dec 1 of previous year
-  const prevDecEnd = new Date(currentYear - 1, 11, 31);       // Dec 31 of previous year
-  
-
-  
-  
-  // Only add previous December if today's date is later than Dec 1
-  if (today >= prevDecemberStart) {
-    for (let d = new Date(prevDecemberStart); d <= prevDecEnd; d.setDate(d.getDate() + 1)) {
-      datesToDisplay.push(new Date(d));
-    }
-  }
-  
-  // 2. Add current year from January 1 up to today
-  const currentYearStart = new Date(currentYear, 0, 1); // Jan 1 of current year
-  for (let d = new Date(currentYearStart); d <= today; d.setDate(d.getDate() + 1)) {
-    datesToDisplay.push(new Date(d));
-  }
-  
-  // 3. Add January of next year (only if today's date is in the next year)
-  if (today.getFullYear() > currentYear) {
-    const nextJanStart = new Date(currentYear + 1, 0, 1);   // Jan 1 of next year
-    const nextJanEnd = new Date(currentYear + 1, 0, 31);    // Jan 31 of next year
-    const endDate = new Date(Math.min(today.getTime(), nextJanEnd.getTime())); // Either today or Jan 31, whichever comes first
+  getDates(today, datesToDisplay);    // YA BÖYLE DİREKT FUNCTION ÇAĞIRMAK BİR SECURITY PROBLEM Mİ ÇÜNKÜ PEK GÖRMÜYORUM, BUNU Bİ SOR.
     
-    for (let d = new Date(nextJanStart); d <= endDate; d.setDate(d.getDate() + 1)) {
-      datesToDisplay.push(new Date(d));
-    }
-  }
-  
   // Reverse the array to display most recent first (today at the top)
   datesToDisplay.reverse();
  
-  // bu actualToday günün tarihini uygun formatta alıp geçen haftaya dönmek için
-//  const actualToday = formatDateKey(today);
 	const lastWeek = formatLastWeek(today);
-  
+	 
   // Create a row for each day
-  for (const currentDate of datesToDisplay) {
+    for (const currentDate of datesToDisplay) {
+	
     const dateKey = formatDateKey(currentDate);
-//	console.log(dateKey);
-//	console.log(lastWeek);
     const dateDisplay = formatDateDisplay(currentDate);
     
     const dayRow = document.createElement('div');
@@ -200,20 +172,16 @@ function renderDiaryDays() {
     dayRow.appendChild(dateCell);
     dayRow.appendChild(entryCell);
 
-    //************************************************************************çalışma alanı
-    // Add row to the grid *****bu if'i ben ekledim. burada koşul olarak date ve value sorgusu yaptırırsan tek kalemde bütün iş hallolacak 
-	                                // ve geriye sadece start date'i ilk entryden başlatmak kalacak.
-	if (dateKey < lastWeek) {		//	burada ilgili entrynin storage key'i tarihle karşılaştırılacak. tarih aynı formata getirilmeli														
-		if (entryTextarea.value){           // aşağıda format date key falan functionları var. onları anlarsan olacak 
-//		if (dateKey > lastWeek) {
-			diaryGrid.appendChild(dayRow);  //zaten formatdatekey fonksiyonu döngünün başında kullanılıyor.
-		}	                                // entrynin keyini alıp karşılaştırsan yetecek
+    // Add row to the grid 
+	                                
+	if (dateKey < lastWeek) {																
+		if (entryTextarea.value){           
+
+			diaryGrid.appendChild(dayRow);  
+		}	                                
 	} else {
 		diaryGrid.appendChild(dayRow);		
 	}
-	
-//******************************************************************çalışma alanı
-	
   }
   
   // Setup autosave after rendering
@@ -262,7 +230,7 @@ function formatDateKey(date) {
   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 }
 
-// Format date of 8 days ago to set it critical date in the if logic: YYYY-MM-DD
+// Format date of 6 days ago to set it critical date in the if logic: YYYY-MM-DD
 function formatLastWeek(date) {
 	  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${(date.getDate() - 6).toString().padStart(2, '0')}`;
 }

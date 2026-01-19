@@ -37,6 +37,8 @@ ekrana gelecek.
 
 -iş 'done' yapıldığında done tarihine mi taşınmalı. veya due tarihinde kalıp, done tarihini belirten ayrı
 bir bilgi mi eklenmeli. mesela description otomatik bir cümle eklenmesi gibi: "done on 23.10.2026" gibi?
+*** bu konuda, bu bir askeri rapor uygulaması değil. kişisel iş takip uygulaması. çok hassas ayarlara gerek
+yok. zaten tarih değiştirilerek iş taşınabiliyor. böyle kalsın, kullanıcı istediği gibi kullansın.
 
 -css ve temalarla ilgili bir özellik nedeniyle sayfa değişimlerinde ve/veya tema değişimlerinde göz kırpma
 gibi bir render sırası problemi oluyormuş, tema muhabbetini sorarken ai söylediydi. benim app'te de oluyor.

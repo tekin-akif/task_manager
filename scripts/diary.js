@@ -63,10 +63,9 @@ function getDates(day, array) {
 	const aWeekAgoSorted = aWeekAgo.sort((a,b) => new Date(a) - new Date(b));
 	const sortedRealDates = aWeekAgoSorted.map(entry => array.push(new Date(entry)));
 	
-	const a = new Date();	
+	const a = day; // new Date(); new date yapınca yeni gün sabah altıda değil gece 12'de geliyor.	
 	let b = new Date();
 	b.setDate(b.getDate() - 6);
-	console.log(b);	
 	while (b<=a) {
 		array.push(new Date(b));
 		b.setDate(b.getDate()+1);

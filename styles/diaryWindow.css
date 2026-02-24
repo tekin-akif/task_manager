@@ -1,0 +1,87 @@
+/* Diary Modal Window Styles */
+
+.diary-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.diary-window {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 1200px;          /* matches your diary container */
+  height: 50vh;               /* half the viewport height */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;     /* stack textarea and buttons */
+  gap: 15px;
+}
+
+.diary-window__textarea {
+  width: 100%;
+  flex: 1;                    /* take all remaining vertical space */
+  min-height: 0;              /* allow flex to shrink if needed */
+  padding: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;           /* still resizable if user wants */
+  box-sizing: border-box;
+}
+
+.diary-window__textarea:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.diary-window__buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.diary-window__btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.diary-window__btn--save {
+  background-color: #28a745;
+  color: white;
+}
+
+.diary-window__btn--save:hover {
+  background-color: #218838;
+}
+
+.diary-window__btn--delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.diary-window__btn--delete:hover {
+  background-color: #c82333;
+}
+
+.diary-window__btn--close {
+  background-color: #6c757d;
+  color: white;
+}
+
+.diary-window__btn--close:hover {
+  background-color: #5a6268;
+}

@@ -3,6 +3,7 @@
 // DOM Elements
 const diaryContainer = document.getElementById("diaryContainer");
 let diaryEntries = []; // Store diary entries as an array
+import { openDiaryWindow } from "./diaryWindow.js"; // Import modal opener
 
 // Initialize the diary page
 function initDiary() {
@@ -41,35 +42,33 @@ window.saveDiaryEntries = async (entries) => {
       body: JSON.stringify(entries)
     });
     if (!response.ok) throw new Error('Failed to save diary entries');
-    return true;  // Return true on success
+    return true;
   } catch (error) {
     console.error('Error saving diary entries:', error);
-    return false;  // Return false on failure
+    return false;
   }
 };
 
 // Get diary entry by date
 function getDiaryEntryByDate(dateKey) {
-  return (diaryEntries.find(entry => entry.diaryEntryDate === dateKey));
-
+  return diaryEntries.find(entry => entry.diaryEntryDate === dateKey);
 }
 
 // diary sayfasında görüntülenecek olan tarihleri tespit edip ilgili array'e (datesToDisplay) ekleyen fonksiyon
 function getDates(day, array) {
-
-	const lastWeek = formatLastWeek(day);
-	const allDates = diaryEntries.map(entry => entry.diaryEntryDate);
-	const aWeekAgo = allDates.filter(item => item < lastWeek);
-	const aWeekAgoSorted = aWeekAgo.sort((a,b) => new Date(a) - new Date(b));
-	const sortedRealDates = aWeekAgoSorted.map(entry => array.push(new Date(entry)));
-	
-	const a = day; // new Date(); new date yapınca yeni gün sabah altıda değil gece 12'de geliyor.	
-	let b = new Date();
-	b.setDate(b.getDate() - 6);
-	while (b<=a) {
-		array.push(new Date(b));
-		b.setDate(b.getDate()+1);
-	}	
+  const lastWeek = formatLastWeek(day);
+  const allDates = diaryEntries.map(entry => entry.diaryEntryDate);
+  const aWeekAgo = allDates.filter(item => item < lastWeek);
+  const aWeekAgoSorted = aWeekAgo.sort((a,b) => new Date(a) - new Date(b));
+  aWeekAgoSorted.forEach(entry => array.push(new Date(entry)));
+  
+  const a = day;
+  let b = new Date();
+  b.setDate(b.getDate() - 6);
+  while (b <= a) {
+    array.push(new Date(b));
+    b.setDate(b.getDate() + 1);
+  }
 }
 
 // Update or create diary entry
@@ -82,7 +81,6 @@ async function updateDiaryEntry(dateKey, content) {
     diaryEntries[existingEntryIndex].diaryEntry = content;
   } else {
     // Create new entry with ID derived from the date
-    // Convert YYYY-MM-DD to a number by removing hyphens
     const dateId = parseInt(dateKey.replace(/-/g, ''));
       
     diaryEntries.push({
@@ -116,16 +114,15 @@ function renderDiaryDays() {
 
   // Collect all dates we need to display (in chronological order)
   const datesToDisplay = [];
-  getDates(today, datesToDisplay);    // YA BÖYLE DİREKT FUNCTION ÇAĞIRMAK BİR SECURITY PROBLEM Mİ ÇÜNKÜ PEK GÖRMÜYORUM, BUNU Bİ SOR.
+  getDates(today, datesToDisplay);
     
   // Reverse the array to display most recent first (today at the top)
   datesToDisplay.reverse();
  
-	const lastWeek = formatLastWeek(today);
-	 
+  const lastWeek = formatLastWeek(today);
+   
   // Create a row for each day
-    for (const currentDate of datesToDisplay) {
-	
+  for (const currentDate of datesToDisplay) {
     const dateKey = formatDateKey(currentDate);
     const dateDisplay = formatDateDisplay(currentDate);
     
@@ -151,61 +148,57 @@ function renderDiaryDays() {
       dateCell.textContent = dateDisplay;
     }
     
-    // Create diary entry cell with editable content
+    // Create diary entry cell with display element (instead of editable textarea)
     const entryCell = document.createElement('div');
     entryCell.className = 'diary-row__entry';
     
-    const entryTextarea = document.createElement('textarea');
-    entryTextarea.className = 'diary-entry__textarea';
-    entryTextarea.placeholder = 'Write your diary entry here...';
+    const entryDisplay = document.createElement('div');
+    entryDisplay.className = 'diary-entry__display';
+    entryDisplay.dataset.date = dateKey;
     
     // Find entry for this date
     const existingEntry = getDiaryEntryByDate(dateKey);
-    entryTextarea.value = existingEntry ? existingEntry.diaryEntry : '';
-    entryTextarea.dataset.date = dateKey;	
+    entryDisplay.textContent = existingEntry ? existingEntry.diaryEntry : '';
     
-    // Add the textarea to the entry cell
-    entryCell.appendChild(entryTextarea);
-    
+    // Add the display to the entry cell
+    entryCell.appendChild(entryDisplay);
+        
     // Add cells to the row
     dayRow.appendChild(dateCell);
     dayRow.appendChild(entryCell);
 
-    // Add row to the grid 
-	                                
-	if (dateKey < lastWeek) {																
-		if (entryTextarea.value){           
-
-			diaryGrid.appendChild(dayRow);  
-		}	                                
-	} else {
-		diaryGrid.appendChild(dayRow);		
-	}
+    // Add row to the grid based on age and content
+    if (dateKey < lastWeek) {
+      if (entryDisplay.textContent) {
+        diaryGrid.appendChild(dayRow);
+      }
+    } else {
+      diaryGrid.appendChild(dayRow);
+    }
   }
   
-  // Setup autosave after rendering
-  setupAutoSave();
-}
+  // Add click listener to open modal when a diary entry display is clicked
+  diaryGrid.addEventListener('click', (e) => {
+    const display = e.target.closest('.diary-entry__display');
+    if (!display) return;
 
-// Setup autosave for diary entries
-function setupAutoSave() {
-  // Remove any existing listeners to avoid duplicates
-  const oldGrid = document.getElementById('diaryGrid');
-  const newGrid = oldGrid.cloneNode(true);
-  oldGrid.parentNode.replaceChild(newGrid, oldGrid);
-  
-  // Add event listener to parent for delegation
-  newGrid.addEventListener('input', function(e) {
-    if (e.target.classList.contains('diary-entry__textarea')) {
-      const dateKey = e.target.dataset.date;
-      const content = e.target.value;
-      
-      // Use debounce to save after typing stops
-      clearTimeout(e.target.saveTimeout);
-      e.target.saveTimeout = setTimeout(() => {
-        updateDiaryEntry(dateKey, content);
-      }, 500);
-    }
+    const dateKey = display.dataset.date;
+    const currentText = display.textContent;
+
+    // Open modal with callbacks
+    openDiaryWindow(
+      currentText,
+      // onSave callback
+      async (newText) => {
+        await updateDiaryEntry(dateKey, newText);
+        display.textContent = newText; // Update the display immediately
+      },
+      // onDelete callback
+      async () => {
+        await updateDiaryEntry(dateKey, '');
+        display.textContent = ''; // Clear the display
+      }
+    );
   });
 }
 
@@ -231,7 +224,7 @@ function formatDateKey(date) {
 
 // Format date of 6 days ago to set it critical date in the if logic: YYYY-MM-DD
 function formatLastWeek(date) {
-	  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${(date.getDate() - 6).toString().padStart(2, '0')}`;
+  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${(date.getDate() - 6).toString().padStart(2, '0')}`;
 }
 
 // Format date for display: Mon, Jan 1
@@ -247,6 +240,14 @@ function isSameDay(date1, date2) {
   return date1.getFullYear() === date2.getFullYear() &&
          date1.getMonth() === date2.getMonth() &&
          date1.getDate() === date2.getDate();
+}
+
+// Helper to render year header (if needed)
+function renderYearHeader() {
+  const yearHead = document.getElementById('yearHead');
+  if (yearHead) {
+    yearHead.textContent = new Date().getFullYear();
+  }
 }
 
 // Initialize the diary page on load

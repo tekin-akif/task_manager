@@ -8,7 +8,9 @@
 
   <link rel="stylesheet" href="styles/main.css">
   
-  <link rel="stylesheet" href="styles/diary.css"> 
+  <link rel="stylesheet" href="styles/diary.css">
+  <link rel="stylesheet" href="styles/diaryWindow.css">
+  
 </head>
 
 <body class="light-theme">
@@ -45,13 +47,15 @@
   </main>
 
   <!-- Scripts -->
-  <script src="scripts/app.js"></script>
-  <script src="scripts/diary.js"></script>
-  <script src="scripts/calendar.js"></script>
+  <script type="module "src="scripts/app.js"></script>
+  <script type="module" src="scripts/diary.js"></script> <!-- bu script module type yapıldı. import kullanabilmek için -->
+  <script src="scripts/calendar.js"></script>            <!-- diğerlerinin module yapılmasına gerek var mı araştırılacak -->
+  <script type="module "src="scripts/diaryWindow.js"></script>
+
   <script src="scripts/speechRecognition.js"></script>
    
   <script src="scripts/scrollManager.js"></script>
-    <script src="scripts/themeSwitch.js"></script>
+  <script src="scripts/themeSwitch.js"></script>
 
 </body>
 </html>

@@ -60,6 +60,8 @@
   flex: 1;
 }
 
+/*DIARY ENTRY TEXT AREA İLE İLGİLİ CLASS İPTAL EDİLDİ GALİBA. AŞAĞIDAKİ BİRKAÇ BLOK BOŞA ÇIKMIŞ OLABİLİR. KONTROL EDİP SİLEBİLİRSİN*/
+
 .diary-entry__textarea {
   width: 100%;
   min-height: 60px;
@@ -87,6 +89,29 @@
   font-style: italic;
   color: var(--placeholder-text); /*#999;                       /* boş günlerdeki, write your diary entry here yazısının rengi */
                                                               /* bunun fontu güzel değil. plannigdeki placeholderla aynı yap*/
+}
+
+/* Diary entry display (blurred, fixed height) */
+.diary-entry__display {
+  width: 100%;
+  min-height: 60px;              /* same as textarea had */
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: var(--task-title-color);
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  background-color: white;       /* or inherit from parent */
+  overflow-y: auto;              /* scroll long text */
+  filter: blur(4px);             /* blur the text */
+  transition: filter 0.2s ease;  /* optional smooth change */
+  cursor: pointer;               /* indicate clickable */
+}
+
+/* Optional: slightly reduce blur on hover to hint interaction */
+.diary-entry__display:hover {
+  filter: blur(3px);
 }
 
 /* Responsive adjustments */

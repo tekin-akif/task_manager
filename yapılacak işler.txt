@@ -1,9 +1,5 @@
 -periodic taskların eksiklikleri giderilecek. frekans yerine task sayısı kullanımına geçilecek. 
 
--diary'de render edilecek girdiler son 7 gün haricinde sadece girdi olan günler şeklinde düzenlenecek.
-son 7 gün, girdiye izin verecek şekilde yine görüntülenecek. ama daha öncesinde boş geçilen günlere
-girdi yapma imkanı kalmayacak.
-
 -diary'de entryler için bir window olmalı mı. yoksa son gün büyütülerek mi çözüm aranmalı. veya focus olan 
 textarea bir hangisi olursa olsun büyümeli mi?
 
@@ -24,7 +20,8 @@ bu şekilde takvimin farklı noktalarına scroll durumu nasıl halledilebilir gp
 
 -diary voice to text özelliği geliştirilip iyi hale getirilecek. aslında tüm girdiler için voice to text
 özelliği güzel olabilir. task windowda mesela başlık olarak ve desc olarak girdi yaparken oraya tıuklayıp
-konuşmak yeterli olsa. tarihler nasıl olsa takvimden seçilebiliyor. sesli arama da olabilir mi?
+konuşmak yeterli olsa. tarihler nasıl olsa takvimden seçilebiliyor. sesli arama da olabilir mi? (diaryWindow
+çalışması sırasında speech mikrofon filan kaybolmuş. muhtemelen görüntü dışında falan kalmıştır.)
 
 -kullanıcı girişi, farklı cihazlardan kullanım, cihaz tanıma, session mantığı konuları araştırılıp
 öğrenilecek. ona göre önden planlamayla girişmek lazım.

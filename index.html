@@ -8,27 +8,29 @@
   <link rel="stylesheet" href="styles/main.css">
   <link rel="stylesheet" href="styles/calendar.css">
   <link rel="stylesheet" href="styles/taskWindow.css">
-  <script>
-  
-	//check for saved theme before the body renders
-	//console.log lines for checking if the script here is functional. and it is.
-	const theme = localStorage.getItem('theme');
-	//console.log("script is running");
-	if (theme === 'dark-theme'){
-	//	console.log("current theme is dark");
-		document.documentElement.classList.add('dark-theme');
-		}
-	
-  </script>
+<script>
+  (function() {
+    // Apply saved theme to body as early as possible
+    const savedTheme = localStorage.getItem('theme');
+    const validThemes = ['light-theme', 'dark-theme', 'summer-theme', 'winter-theme'];
+    const themeToApply = savedTheme && validThemes.includes(savedTheme) ? savedTheme : 'light-theme';
+    document.body.classList.add(themeToApply);
+  })();
+</script>
   
 </head>
 
-<body class="light-theme">
+<body>
   <!-- Header  -->
   <header class="header">
 	<section class="header__left">
 	
-	  <button onclick="themeSwitch()">Theme</button>
+	  <select id="theme-select" aria-label="Select theme">
+  <option value="light-theme">Light</option>
+  <option value="dark-theme">Dark</option>
+  <option value="summer-theme">Summer</option>
+  <option value="winter-theme">Winter</option>
+</select>
 
       <h1 class="header__title">Task Manager <span id="yearHead" class="calendar__year"></span></h1>
 	</section>

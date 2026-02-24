@@ -1,4 +1,3 @@
-
 /* bu işi yaparken aşağıda başladığım gibi her ögeyi ayrı ayrı uygun adla variable yapmak bir uçta, primary color secondary color
 gibi kodlama yaparak yapmak diğer uçtaymış. en iyisi, ikisinin arası gibi olan layerlı falan bir sistemmiş (three tier system). 
 ben öncelikle bu başladığım şekilde tamamını bitireceğim ve gpt'den palet hazırlamasını isteyecek düzeye getireceğim.
@@ -15,9 +14,6 @@ falan gibi alakasız şeyler yerine tüm temalar insan duygularıyla ilişkili p
 ***aga tüm app'de bir font optimizasyonu yapman lazım zaten. temalara dahil olsa da olmasa da.
 
  */
-
-
-
 /* ------------------------------------------- */
 /* 1. Default Theme (Light) - Defined in :root */
 /* ------------------------------------------- */
@@ -59,42 +55,115 @@ falan gibi alakasız şeyler yerine tüm temalar insan duygularıyla ilişkili p
 }
 
 /* ------------------------------------------- */
-/* 2. Overriding for the Dark Theme            */
+/* 2. Dark Theme                                */
 /* ------------------------------------------- */
 body.dark-theme {
-	
---body-background-color: #0cf0f1;   /* deneme amaçlı saçma renkler */
---header-background-color: #a23; 
---header-text-color: #b33;
---nav-buttons-title: #ccc;
---nav-buttons-hov: #123;
---nav-buttons-active: #909;
---stats-cont-background: #9bb;
---page-titles-color: #f23;  
---cal-year-title: #444;
---cal-background-color: #5f5; 
---cal-month-header: #a99;
---cal-day-label: #ccc;
---day-label-background: #9c9;
---day-cell-background: #bcd;
---day-cell-border: #a23;
---day-head-background: #5f5f5f;
---task-title-color: #a23;
---today-color: #600dca;
---due-task-background: #3d3d3d;
---due-task-border: #000000;
---late-task-background: #b2b1b3;
---late-task-border: #000000;
---done-task-background: #5a4a3a;
---done-task-border: #000000;
---placeholder-text: #a25;
---del-button-background: #cc1111;
---del-button-text: black;
---save-button-background: #cc1111;
---save-button-text: pink;
---cancel-button-background: #11bbbb;
---cancel-button-text: brown;
---disabled-area: #82cd82;
+--body-background-color: #1e1e1e;
+--header-background-color: #2d2d2d;
+--header-text-color: #e0e0e0;
+--nav-buttons-title: #e0e0e0;
+--nav-buttons-hov: #3d3d3d;
+--nav-buttons-active: #bb86fc;
+--stats-cont-background: #2d2d2d;
+--page-titles-color: #e0e0e0;
+--cal-year-title: #e0e0e0;
+--cal-background-color: #2d2d2d;
+--cal-month-header: #bb86fc;
+--cal-day-label: #a0a0a0;
+--day-label-background: #3d3d3d;
+--day-cell-background: #2d2d2d;
+--day-cell-border: #444;
+--day-head-background: #3d3d3d;
+--task-title-color: #e0e0e0;
+--today-color: #cf6679;
+--due-task-background: #423d2d;
+--due-task-border: #6b5e3a;
+--late-task-background: #442c2c;
+--late-task-border: #6b3a3a;
+--done-task-background: #1e3a2a;
+--done-task-border: #2a5a3a;
+--placeholder-text: #777;
+--del-button-background: #cf6679;
+--del-button-text: #1e1e1e;
+--save-button-background: #bb86fc;
+--save-button-text: #1e1e1e;
+--cancel-button-background: #3d3d3d;
+--cancel-button-text: #e0e0e0;
+--disabled-area: #3d3d3d;
+}
 
-   
+/* ------------------------------------------- */
+/* 3. Summer Theme                              */
+/* ------------------------------------------- */
+body.summer-theme {
+--body-background-color: #fff9e6;
+--header-background-color: #f4a261;
+--header-text-color: #2d2d2d;
+--nav-buttons-title: #2d2d2d;
+--nav-buttons-hov: #e76f51;
+--nav-buttons-active: #2a9d8f;
+--stats-cont-background: #ffe5b4;
+--page-titles-color: #2d2d2d;
+--cal-year-title: #2d2d2d;
+--cal-background-color: #fff1d6;
+--cal-month-header: #e76f51;
+--cal-day-label: #6b4f3c;
+--day-label-background: #ffe5b4;
+--day-cell-background: #fffff0;
+--day-cell-border: #f4a261;
+--day-head-background: #ffe5b4;
+--task-title-color: #2d2d2d;
+--today-color: #2a9d8f;
+--due-task-background: #fff3cd;
+--due-task-border: #ffe69b;
+--late-task-background: #f8d7da;
+--late-task-border: #f5c6cb;
+--done-task-background: #d4edda;
+--done-task-border: #c3e6cb;
+--placeholder-text: #a98467;
+--del-button-background: #e76f51;
+--del-button-text: white;
+--save-button-background: #2a9d8f;
+--save-button-text: white;
+--cancel-button-background: #f4a261;
+--cancel-button-text: white;
+--disabled-area: #f0e6d2;
+}
+
+/* ------------------------------------------- */
+/* 4. Winter Theme                              */
+/* ------------------------------------------- */
+body.winter-theme {
+--body-background-color: #e8f0fe;
+--header-background-color: #2c3e50;
+--header-text-color: #ecf0f1;
+--nav-buttons-title: #ecf0f1;
+--nav-buttons-hov: #34495e;
+--nav-buttons-active: #3498db;
+--stats-cont-background: #d4e6f1;
+--page-titles-color: #2c3e50;
+--cal-year-title: #ecf0f1;
+--cal-background-color: #f0f8ff;
+--cal-month-header: #3498db;
+--cal-day-label: #5d6d7e;
+--day-label-background: #d4e6f1;
+--day-cell-background: #ffffff;
+--day-cell-border: #b0c4de;
+--day-head-background: #d4e6f1;
+--task-title-color: #2c3e50;
+--today-color: #e67e22;
+--due-task-background: #fef9e7;
+--due-task-border: #f1c40f;
+--late-task-background: #f2d7d5;
+--late-task-border: #e6b0aa;
+--done-task-background: #d5f5e3;
+--done-task-border: #a9dfbf;
+--placeholder-text: #7f8c8d;
+--del-button-background: #e74c3c;
+--del-button-text: white;
+--save-button-background: #3498db;
+--save-button-text: white;
+--cancel-button-background: #95a5a6;
+--cancel-button-text: white;
+--disabled-area: #ecf0f1;
 }

@@ -63,7 +63,7 @@ function getDates(day, array) {
   aWeekAgoSorted.forEach(entry => array.push(new Date(entry)));
   
   const a = day;
-  let b = new Date();
+  let b = new Date(a);
   b.setDate(b.getDate() - 6);
   while (b <= a) {
     array.push(new Date(b));
@@ -222,9 +222,11 @@ function formatDateKey(date) {
   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 }
 
-// Format date of 6 days ago to set it critical date in the if logic: YYYY-MM-DD
+// Format date of 6 days ago to set the threshold for showing older entries: YYYY-MM-DD
 function formatLastWeek(date) {
-  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${(date.getDate() - 6).toString().padStart(2, '0')}`;
+  const lastWeekDate = new Date(date);
+  lastWeekDate.setDate(lastWeekDate.getDate() - 6);
+  return formatDateKey(lastWeekDate);
 }
 
 // Format date for display: Mon, Jan 1

@@ -2,7 +2,7 @@
 // TASK OBJECT CLASS
 // =============================================
 class Task {
-  constructor({ id, title, desc, due, type, status, parentId, endDate, frequency }) {
+  constructor({ id, title, desc, due, type, status, parentId, frequency, count }) {
     this.id = id ? parseInt(id) : Date.now();
     
     this.title = title || "";
@@ -11,13 +11,13 @@ class Task {
     this.type = type || "regular task";
     // Special handling for reminders
     if (this.type === "reminder") {
-      this.status = null; // or any default value you prefer
+      this.status = null;
     } else {
       this.status = this.calculateInitialStatus(status, due);
     }
     this.parentId = parentId || null;
-    this.endDate = endDate || null;
-    this.frequency = frequency || null;
+    this.frequency = frequency || null;      // interval in days (for periodic tasks)
+    this.count = count || null;               // total number of tasks including mother (for periodic tasks)
   }
 
   // Determine initial status based on due date and existing status
@@ -40,6 +40,23 @@ class Task {
       alert("Title is required!");
       return false;
     }
+
+    // Periodic task specific validation
+    if (this.type === "periodic task") {
+      if (!this.frequency) {
+        alert("Periodic tasks require an interval (frequency) in days!");
+        return false;
+      }
+      if (!this.count || this.count < 1 || this.count > 99) {
+        alert("Number of occurrences (count) must be between 1 and 99.");
+        return false;
+      }
+      if (!this.due) {
+        alert("Periodic tasks must have a start due date.");
+        return false;
+      }
+    }
+
     return true;
   }
 
@@ -63,15 +80,7 @@ class Task {
       const originalTaskSnapshot = isExisting ? {...originalTask} : null;
       
       // =================================================================
-      // 1. Validate periodic task parameters
-      // =================================================================
-      if (this.type === "periodic task" && (!this.endDate || !this.frequency)) {
-        alert("Periodic tasks require both an end date and frequency!");
-        return false;
-      }
-
-      // =================================================================
-      // 2. Handle periodic task logic
+      // 1. Handle periodic task logic (including conversions)
       // =================================================================
       if (this.type === "periodic task" || (isExisting && originalTaskSnapshot.type === "periodic task")) {
         const result = await window.PeriodicTaskHandler.handlePeriodicTaskSave(
@@ -84,36 +93,30 @@ class Task {
         if (!result.shouldContinue) {
           return result.success;
         }
-        
         // If shouldContinue is true, proceed with regular save logic below
         // (this handles cases where periodic logic doesn't need special handling)
       } else {
         // =================================================================
-        // 3. Handle non-periodic task type conversions using TaskConverter
+        // 2. Handle non-periodic task type conversions using TaskConverter
         // =================================================================
         const needsTypeConversion = 
           (isExisting && originalTaskSnapshot.type !== this.type);
         
         if (needsTypeConversion) {
-          // Use TaskConverter for type conversions
           const result = await window.TaskConverter.convertTask(this, tasks);
           
           if (result.success) {
             const success = await window.saveTasks(result.tasks);
-            
-            if (success) {
-              await window.refreshAllUI();
-            }
+            if (success) await window.refreshAllUI();
             return success;
           }
           return false;
         }
 
         // =================================================================
-        // 4. Update task in array for non-periodic tasks
+        // 3. Update task in array for non-periodic tasks
         // =================================================================
         const index = tasks.findIndex(t => Number(t.id) === Number(this.id));
-        
         if (index === -1) {
           tasks.push(this);
         } else {
@@ -122,13 +125,10 @@ class Task {
       }
 
       // =================================================================
-      // 5. Regular save
+      // 4. Regular save (for non-periodic or simple updates)
       // =================================================================
       const success = await window.saveTasks(tasks);
-      
-      if (success) {
-        await window.refreshAllUI();
-      }
+      if (success) await window.refreshAllUI();
       return success;
 
     } catch (error) {

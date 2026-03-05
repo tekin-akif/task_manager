@@ -1,4 +1,3 @@
-
 // TASK WINDOW CLASS (MODAL)
 // =============================================
 class TaskWindow {
@@ -15,7 +14,7 @@ class TaskWindow {
     this.cancelBtn = document.createElement("button");
     this.saveBtn = document.createElement("button");
     this.overlay = document.createElement("div");
-    this.endDateInput = document.createElement("input");
+    this.countInput = document.createElement("input");
     this.frequencySelect = document.createElement("select");
 
     // Class setup
@@ -43,13 +42,20 @@ class TaskWindow {
     this.descInput.placeholder = "Description";
     this.dateInput.type = "date";
     this.deleteBtn.textContent = "Delete";
-	this.deleteBtn.type = "button";
+    this.deleteBtn.type = "button";
     this.cancelBtn.textContent = "Cancel";
-	this.cancelBtn.type = "button";
+    this.cancelBtn.type = "button";
     this.saveBtn.textContent = "Save";
-	this.saveBtn.type = "submit"; // together with the form submit handler in the async open (), pressing "enter" saves now, instead of delete.
-    
-    // Configure frequency dropdown
+    this.saveBtn.type = "submit";
+
+    // Configure count input (replaces end date)
+    this.countInput.type = "number";
+    this.countInput.min = "1";
+    this.countInput.max = "99";
+    this.countInput.placeholder = "1-99";
+    this.countInput.value = "1";
+
+    // Configure frequency dropdown (interval in days)
     this.frequencySelect.innerHTML = 
       [1, 2, 3, 4, 5, 6, 7, 10, 15, 20, 30].map(n => 
         `<option value="${n}">${n} days</option>`
@@ -60,18 +66,17 @@ class TaskWindow {
     this.form.appendChild(this.createFormGroup("Task Type", this.typeSelect));
     this.form.appendChild(this.createFormGroup("Title", this.titleInput));
     this.form.appendChild(this.createFormGroup("Description", this.descInput));
-    
+
     const dateGroup = document.createElement("div");
     dateGroup.className = "task-window__date-group";
     dateGroup.append(
       this.createFormGroup("Due Date", this.dateInput),
-      this.createFormGroup("End Date", this.endDateInput),
-      this.createFormGroup("Frequency", this.frequencySelect)
+      this.createFormGroup("Number of Occurrences", this.countInput),
+      this.createFormGroup("Interval (days)", this.frequencySelect)
     );
     this.form.appendChild(dateGroup);
     this.form.appendChild(this.createFormGroup("Status", this.statusSelect));
 
-    // Action buttons
     const actionDiv = document.createElement("div");
     actionDiv.className = "task-window__actions";
     actionDiv.append(this.deleteBtn, this.cancelBtn, this.saveBtn);
@@ -82,29 +87,36 @@ class TaskWindow {
     this.typeSelect.addEventListener('change', () => this.toggleFields());
   }
 
-  // Toggle fields based on task type
+  // ✅ CORRECTED FIELD TOGGLING
   toggleFields() {
     const isPeriodic = this.typeSelect.value === "periodic task";
-    [this.endDateInput, this.frequencySelect].forEach(field => {
-      field.disabled = !isPeriodic;
-    });
-    
+    const isReminder = this.typeSelect.value === "reminder";
+    const isChildTask = this.task && this.task.type === "periodic task" && 
+                        this.task.parentId && this.task.parentId !== this.task.id;
+
+    // For periodic tasks: mother can edit all three; child can edit none
+    // For non-periodic tasks: only due date enabled; count and interval disabled
+    if (isPeriodic) {
+      // Periodic task: enable/disable based on child status
+      this.dateInput.disabled = isChildTask;
+      this.countInput.disabled = isChildTask;
+      this.frequencySelect.disabled = isChildTask;
+    } else {
+      // Non-periodic: due date always enabled, count/interval always disabled
+      this.dateInput.disabled = false;
+      this.countInput.disabled = true;
+      this.frequencySelect.disabled = true;
+    }
+
+    // Status field: disabled for reminders, and also disabled if no due date (planning mode)
+    this.statusSelect.disabled = isReminder || !this.dateInput.value;
+
     // Handle parentId
     if (isPeriodic && !this.task.parentId) {
       this.task.parentId = this.task.id;
     } else if (!isPeriodic) {
       this.task.parentId = null;
     }
-
-    const isReminder = this.typeSelect.value === "reminder";
-    [this.statusSelect].forEach(field => {
-      field.disabled = isReminder;
-    });
-
-    const isPlanning = !this.dateInput.value;
-    [this.statusSelect].forEach(field => {
-      field.disabled = isPlanning;
-    });
   }
 
   createFormGroup(labelText, inputElement) {
@@ -123,7 +135,6 @@ class TaskWindow {
     return group;
   }
 
-  // Open modal with task data
   async open(taskData = {}) {
     if (document.querySelector(".task-window-overlay")) return;
 
@@ -146,45 +157,26 @@ class TaskWindow {
     this.dateInput.addEventListener('change', () => {
       this.task.due = this.dateInput.value;
       this.updateStatusOptions();
+      this.toggleFields(); // re-evaluate disabled states (planning mode may change)
     });
 
     await new Promise(resolve => setTimeout(resolve, 50));
     this.titleInput.focus();
-    
-    // Initialize periodic fields
-    this.endDateInput.type = "date";
-    this.endDateInput.value = this.task.endDate || "";
-    this.frequencySelect.value = this.task.frequency || "1";
-    this.toggleFields();
-    
-    if (this.task.type === "reminder") {
-      this.statusSelect.disabled = true;
-    }
-    
-    // ParentId initialization
-    if (this.task.type === "periodic task" && !this.task.parentId) {
-      this.task.parentId = this.task.id;
-    }
-    
-    // Child task check
-    const isChildTask = this.task.type === "periodic task" && 
-                      this.task.parentId && 
-                      this.task.parentId !== this.task.id;
-                        
-    if (isChildTask) {
-      this.dateInput.disabled = true;
-      this.frequencySelect.disabled = true;
-    }
-  // Add form submit handler
-  this.form.onsubmit = async (e) => {
-    e.preventDefault();
-  //  if (await this.handleSave()) resolve(true);
-  await this.handleSave()
-  };
 
+    // Initialize periodic fields
+    this.countInput.value = this.task.count || "1";
+    this.frequencySelect.value = this.task.frequency || "1";
+
+    // Set initial disabled states
+    this.toggleFields();
+
+    // Form submit handler
+    this.form.onsubmit = async (e) => {
+      e.preventDefault();
+      await this.handleSave();
+    };
 
     return new Promise((resolve) => {
-
       this.cancelBtn.onclick = () => {
         this.close();
         resolve(false);
@@ -195,7 +187,7 @@ class TaskWindow {
         if (confirm("Are you sure you want to delete this task?")) {
           const result = await this.task.delete();
           if (result) {
-			window.refreshTaskStats ();
+            window.refreshTaskStats();
             this.close();
             resolve(true);
           }
@@ -259,10 +251,15 @@ class TaskWindow {
     this.task.desc = this.descInput.value;
     this.task.due = this.dateInput.value || null;
     this.task.status = this.statusSelect.value;
-    this.task.endDate = this.endDateInput.value || null;
-    this.task.frequency = parseInt(this.frequencySelect.value) || null;
     
-    // Set parentId
+    if (this.task.type === "periodic task") {
+      this.task.frequency = parseInt(this.frequencySelect.value) || null;
+      this.task.count = parseInt(this.countInput.value) || null;
+    } else {
+      this.task.frequency = null;
+      this.task.count = null;
+    }
+    
     if (this.task.type === "periodic task") {
       this.task.parentId = this.task.parentId || this.task.id;
     } else {
@@ -272,10 +269,9 @@ class TaskWindow {
     if (this.task.validate()) {
       const success = await this.task.save();
       if (success) {
-		window.refreshTaskStats ();
+        window.refreshTaskStats();
         this.close();
         return true;
-		
       }
     }
     return false;

@@ -12,7 +12,7 @@ class PeriodicTaskHandler {
    * @returns {Object} - {success: boolean, tasks: Array, shouldContinue: boolean}
    */
   static async handlePeriodicTaskSave(task, tasks, originalTaskSnapshot, isExisting) {
-    const groupProperties = ['title', 'frequency', 'endDate', 'type']; // Properties that propagate
+    const groupProperties = ['title', 'type', 'frequency', 'count']; // Properties that propagate to all family members
     
     // =================================================================
     // 1. Handle task type conversions using TaskConverter
@@ -22,15 +22,10 @@ class PeriodicTaskHandler {
       (!isExisting && task.type === "periodic task");
     
     if (needsTypeConversion) {
-      // Use TaskConverter for type conversions
       const result = await window.TaskConverter.convertTask(task, tasks);
-      
       if (result.success) {
         const success = await window.saveTasks(result.tasks);
-        
-        if (success) {
-          await window.refreshAllUI();
-        }
+        if (success) await window.refreshAllUI();
         return { success, tasks: result.tasks, shouldContinue: false };
       }
       return { success: false, tasks, shouldContinue: false };
@@ -40,407 +35,278 @@ class PeriodicTaskHandler {
     // 2. Update task in array & find original mother task
     // =================================================================
     const index = tasks.findIndex(t => Number(t.id) === Number(task.id));
-    
     if (index === -1) {
       tasks.push(task);
     } else {
       tasks[index] = task;
     }
 
-    // Find the original mother task (properly create copy to avoid reference issues)
+    // Find the original mother task (snapshot before any changes)
     let originalMotherTask = originalTaskSnapshot;
     if (isExisting && originalTaskSnapshot.parentId) {
       const motherTask = tasks.find(t => t.id === originalTaskSnapshot.parentId);
       originalMotherTask = motherTask ? {...motherTask} : {...originalTaskSnapshot};
     }
 
-    // =================================================================
-    // 3. SPECIAL HANDLING FOR MOTHER TASK END DATE CHANGES
-    // =================================================================
-    const isMother = (!task.parentId || task.id === task.parentId) && task.type === "periodic task";
-    const endDateChanged = isExisting && task.endDate !== originalTaskSnapshot.endDate;
-    
-    if (isMother && endDateChanged) {
-      return await this.handleMotherTaskEndDateChange(task, tasks, originalTaskSnapshot, groupProperties);
+    // If task is not periodic (after conversion check), we should not proceed
+    if (task.type !== "periodic task") {
+      return { success: true, tasks, shouldContinue: true };
     }
 
     // =================================================================
-    // 4. Handle child task changes for periodic tasks
+    // 3. Ensure count property exists (for backward compatibility)
     // =================================================================
-    if (isExisting && task.type === "periodic task") {
-      const parentId = originalMotherTask.id;
-      
-      const groupTasks = tasks.filter(t => (t.parentId === parentId || t.id === parentId) && t.type === "periodic task");
-      
-      if (groupTasks.length) {
-        // If endDate changed, we need to handle surplus children or add new ones
-        const endDateChanged = task.endDate !== originalMotherTask.endDate;
-        
-        groupTasks.forEach(task_item => {
-          // Only update the specified group properties
-          // This preserves individual status and desc for each task
-          groupProperties.forEach(prop => {
-            task_item[prop] = task[prop]; // Propagate only group properties
-          });
-        });
-        
-        // If end date changed, we need to handle it
-        if (endDateChanged) {
-          return await this.handleChildTaskEndDateChange(task, tasks, originalMotherTask, groupTasks);
-        }
+    if (task.count === undefined || task.count === null) {
+      // Compute count from existing family if possible
+      const motherId = task.parentId || task.id;
+      const family = tasks.filter(t => t.id === motherId || t.parentId === motherId);
+      task.count = family.length; // includes mother
+      if (task.count < 1) task.count = 1;
+    }
+
+    // =================================================================
+    // 4. Identify mother task and current group tasks
+    // =================================================================
+    const motherId = task.parentId || task.id;
+    const motherTask = tasks.find(t => t.id === motherId);
+    if (!motherTask) {
+      console.error("Mother task not found for periodic family");
+      return { success: false, tasks, shouldContinue: false };
+    }
+
+    // Get all current family members (including mother)
+    let currentFamily = tasks.filter(t => t.id === motherId || t.parentId === motherId);
+
+    // =================================================================
+    // 5. Detect changes in group properties
+    // =================================================================
+    const isMotherBeingEdited = (task.id === motherId);
+    
+    // Values to compare against original mother
+    const newGroupValues = {
+      title: task.title,
+      type: task.type,
+      frequency: task.frequency,
+      count: task.count,
+      due: isMotherBeingEdited ? task.due : motherTask.due  // only mother's due matters
+    };
+
+    const oldGroupValues = {
+      title: originalMotherTask.title,
+      type: originalMotherTask.type,
+      frequency: originalMotherTask.frequency,
+      count: originalMotherTask.count,
+      due: originalMotherTask.due
+    };
+
+    // Determine what changed
+    const changedProps = [];
+    for (let prop of ['title', 'type', 'frequency', 'count']) {
+      if (newGroupValues[prop] !== oldGroupValues[prop]) {
+        changedProps.push(prop);
       }
     }
+    const dueChanged = isMotherBeingEdited && (newGroupValues.due !== oldGroupValues.due);
 
     // =================================================================
-    // 5. Handle parameter changes
+    // 6. Apply changes based on what changed
     // =================================================================
-    if (isExisting && task.type === "periodic task" && this.parametersChanged(task, originalMotherTask)) {
-      return await this.handleParameterChanges(task, tasks, originalMotherTask);
+
+    // Case: No group property changes → just update the individual task (child status/desc)
+    if (changedProps.length === 0 && !dueChanged) {
+      return { success: true, tasks, shouldContinue: true };
     }
 
-    // Continue with regular save
-    return { success: true, tasks, shouldContinue: true };
-  }
-
-  /**
-   * Handle mother task end date changes
-   */
-  static async handleMotherTaskEndDateChange(task, tasks, originalTaskSnapshot, groupProperties) {
-    const parentId = task.id;
-    
-    // Find all tasks in the group
-    const groupTasks = tasks.filter(t => (t.parentId === parentId || t.id === parentId) && t.type === "periodic task");
-    
-    // Update all tasks in the group with ALL group properties, not just end date
-    groupTasks.forEach(task_item => {
-      // Propagate all group properties including title
-      groupProperties.forEach(prop => {
-        task_item[prop] = task[prop];
+    // Case: Only title/type changed → propagate to all family members
+    if (changedProps.every(p => p === 'title' || p === 'type') && !dueChanged && !changedProps.includes('frequency') && !changedProps.includes('count')) {
+      currentFamily.forEach(member => {
+        if (changedProps.includes('title')) member.title = task.title;
+        if (changedProps.includes('type')) member.type = task.type;
       });
-    });
-    
-    // Handle end date changes
-    const newEndDate = new Date(task.endDate);
-    const originalEndDate = originalTaskSnapshot ? new Date(originalTaskSnapshot.endDate) : new Date();
-    
-    // If new end date is earlier than original, remove surplus children
-    if (newEndDate < originalEndDate) {
-      const tasksToKeep = [];
-      const tasksToRemove = [];
-      
-      groupTasks.forEach(task_item => {
-        if (task_item.due) {
-          const taskDueDate = new Date(task_item.due);
-          
-          if (taskDueDate > newEndDate) {
-            tasksToRemove.push(task_item.id);
-          } else {
-            tasksToKeep.push(task_item);
-          }
-        } else {
-          tasksToKeep.push(task_item); // Keep tasks without due dates
-        }
-      });
-      
-      // Update the tasks array by removing surplus children
-      const filteredTasks = tasks.filter(t => !tasksToRemove.includes(t.id));
-      
-      const success = await window.saveTasks(filteredTasks);
-      
-      if (success) {
-        await window.refreshAllUI();
-      }
-      return { success, tasks: filteredTasks, shouldContinue: false };
-    } 
-    // If new end date is later than original, add new children
-    else if (newEndDate > originalEndDate) {
-      return await this.addNewChildTasks(task, tasks, parentId);
-    }
-    else {
-      // End date technically changed (string comparison) but dates are equivalent
-      // Still need to save to propagate changes
+      // No regeneration needed, just save
       const success = await window.saveTasks(tasks);
-      
-      if (success) {
-        await window.refreshAllUI();
-      }
+      if (success) await window.refreshAllUI();
       return { success, tasks, shouldContinue: false };
     }
-  }
 
-  /**
-   * Handle child task end date changes
-   */
-  static async handleChildTaskEndDateChange(task, tasks, originalMotherTask, groupTasks) {
-    const newEndDate = new Date(task.endDate);
-    const originalEndDate = new Date(originalMotherTask.endDate);
-    
-    // If new end date is earlier than original, remove surplus children
-    if (newEndDate < originalEndDate) {
-      const tasksToKeep = [];
-      const tasksToRemove = [];
-      
-      groupTasks.forEach(task_item => {
-        if (task_item.due) {
-          const taskDueDate = new Date(task_item.due);
-          
-          if (taskDueDate > newEndDate) {
-            tasksToRemove.push(task_item.id);
-          } else {
-            tasksToKeep.push(task_item);
-          }
-        } else {
-          tasksToKeep.push(task_item); // Keep tasks without due dates (shouldn't happen, but just in case)
-        }
-      });
-      
-      // Update all tasks in memory with the new end date
-      tasks.forEach(task_item => {
-        if (task_item.id === originalMotherTask.id || task_item.parentId === originalMotherTask.id) {
-          task_item.endDate = task.endDate;
-        }
-      });
-      
-      // Update the tasks array by removing surplus children
-      const filteredTasks = tasks.filter(t => !tasksToRemove.includes(t.id));
-      
-      const success = await window.saveTasks(filteredTasks);
-      
-      if (success) {
-        await window.refreshAllUI();
-      }
-      return { success, tasks: filteredTasks, shouldContinue: false };
-    } 
-    // If new end date is later than original, add new children
-    else if (newEndDate > originalEndDate) {
-      return await this.addNewChildTasksForGroup(task, tasks, originalMotherTask);
+    // Case: Count changed (and possibly other properties, but we'll handle count separately)
+    if (changedProps.includes('count')) {
+      const result = await this.handleCountChange(motherTask, tasks, currentFamily, oldGroupValues.count, task.count);
+      return result;
     }
-    
-    // Continue with regular save
-    return { success: true, tasks, shouldContinue: true };
+
+    // Case: Frequency or due date changed (regenerate all children)
+    if (changedProps.includes('frequency') || dueChanged) {
+      const result = await this.handleRegeneration(motherTask, tasks, currentFamily, oldGroupValues);
+      return result;
+    }
+
+    // Fallback: just propagate all group properties (should not reach here)
+    currentFamily.forEach(member => {
+      groupProperties.forEach(prop => {
+        if (prop !== 'count') member[prop] = task[prop];
+      });
+      member.count = task.count;
+    });
+    const success = await window.saveTasks(tasks);
+    if (success) await window.refreshAllUI();
+    return { success, tasks, shouldContinue: false };
   }
 
   /**
-   * Add new child tasks when end date is extended
+   * Handle change in the number of child tasks (count)
    */
-  static async addNewChildTasks(task, tasks, parentId) {
-    // Find all existing child tasks (including the mother task)
-    const allGroupTasks = tasks.filter(t => t.id === parentId || t.parentId === parentId);
-    
-    // Find the latest existing task date
-    const latestTaskDate = allGroupTasks
-      .map(t => t.due ? new Date(t.due) : null)
-      .filter(date => date !== null)
-      .reduce((latest, current) => current > latest ? current : latest, new Date(0));
-    
-    // Calculate the next date after the latest existing task
-    let nextDate = new Date(latestTaskDate);
-    nextDate.setDate(nextDate.getDate() + task.frequency);
-  
-    // Find the highest existing child index to ensure unique IDs
-    const highestChildIndex = allGroupTasks
-      .filter(t => t.id !== parentId) // Exclude the mother task
-      .reduce((max, task_item) => {
-        const childIndex = task_item.id - parentId * 1000;
-        return childIndex > max ? childIndex : max;
-      }, 0);
-    
-    // Generate new tasks from the day after the latest to the new end date
-    const newChildTasks = [];
-    let childIndex = highestChildIndex + 1; // Start after the highest existing index
-    const newEndDate = new Date(task.endDate);
-    
-    while (nextDate <= newEndDate) {
-      const dueISO = nextDate.toISOString().split('T')[0];
+  static async handleCountChange(motherTask, tasks, currentFamily, oldCount, newCount) {
+    const motherId = motherTask.id;
+    const children = currentFamily.filter(t => t.id !== motherId).sort((a, b) => new Date(a.due) - new Date(b.due));
+    const currentTotal = currentFamily.length; // includes mother
+
+    if (newCount > currentTotal) {
+      // Add new children at the end
+      const result = await this.addNewChildren(motherTask, tasks, children, newCount - currentTotal);
+      return result;
+    } else if (newCount < currentTotal) {
+      // Remove surplus children (the latest ones)
+      const result = await this.removeSurplusChildren(motherTask, tasks, children, currentTotal - newCount);
+      return result;
+    } else {
+      // Count unchanged, just propagate other properties if any (handled elsewhere)
+      return { success: true, tasks, shouldContinue: true };
+    }
+  }
+
+  /**
+   * Add new child tasks when count increases
+   */
+  static async addNewChildren(motherTask, tasks, existingChildren, numberOfNew) {
+    const motherId = motherTask.id;
+    const interval = motherTask.frequency;
+    const lastChild = existingChildren.length > 0 ? existingChildren[existingChildren.length - 1] : null;
+    let nextDue;
+    if (lastChild) {
+      nextDue = new Date(lastChild.due);
+      nextDue.setDate(nextDue.getDate() + interval);
+    } else {
+      // No children yet, start from mother's due + interval
+      nextDue = new Date(motherTask.due);
+      nextDue.setDate(nextDue.getDate() + interval);
+    }
+
+    // Find highest existing child index
+    const highestChildIndex = existingChildren.reduce((max, child) => {
+      const idx = child.id - motherId * 1000;
+      return idx > max ? idx : max;
+    }, 0);
+
+    const newChildren = [];
+    for (let i = 0; i < numberOfNew; i++) {
+      const dueISO = nextDue.toISOString().split('T')[0];
+      const childIndex = highestChildIndex + 1 + i;
+      const newId = motherId * 1000 + childIndex;
       
-      newChildTasks.push(new Task({
-        ...task,
-        id: parentId * 1000 + childIndex,
-        parentId: parentId,
+      newChildren.push(new Task({
+        ...motherTask,
+        id: newId,
+        parentId: motherId,
         due: dueISO,
         status: "due",
-        desc: "" // Empty description
+        desc: ""
       }));
-      
-      nextDate.setDate(nextDate.getDate() + task.frequency);
-      childIndex++;
+
+      nextDue.setDate(nextDue.getDate() + interval);
     }
-    
-    // Add the new tasks to the existing ones
-    const success = await window.saveTasks([...tasks, ...newChildTasks]);
-    
-    if (success) {
-      await window.refreshAllUI();
-    }
-    return { success, tasks: [...tasks, ...newChildTasks], shouldContinue: false };
+
+    const updatedTasks = [...tasks, ...newChildren];
+    const success = await window.saveTasks(updatedTasks);
+    if (success) await window.refreshAllUI();
+    return { success, tasks: updatedTasks, shouldContinue: false };
   }
 
   /**
-   * Add new child tasks for group (when editing child task)
+   * Remove surplus child tasks when count decreases
    */
-  static async addNewChildTasksForGroup(task, tasks, originalMotherTask) {
-    // Find the parent ID (will be the same regardless of which task we're editing)
-    const parentId = originalMotherTask.id;
-    
-    // Find all existing child tasks (including the mother task)
-    const allGroupTasks = tasks.filter(t => t.id === parentId || t.parentId === parentId);
-    
-    // Find the latest existing task date
-    const latestTaskDate = allGroupTasks
-      .map(t => t.due ? new Date(t.due) : null)
-      .filter(date => date !== null)
-      .reduce((latest, current) => current > latest ? current : latest, new Date(0));
-    
-    // Calculate the next date after the latest existing task
-    let nextDate = new Date(latestTaskDate);
-    nextDate.setDate(nextDate.getDate() + task.frequency);
-    
-    // Find the highest existing child index to ensure unique IDs
-    const highestChildIndex = allGroupTasks
-      .filter(t => t.id !== parentId) // Exclude the mother task
-      .reduce((max, task_item) => {
-        const childIndex = task_item.id - parentId * 1000;
-        return childIndex > max ? childIndex : max;
-      }, 0);
-    
-    // Generate new tasks from the day after the latest to the new end date
-    const newChildTasks = [];
-    let childIndex = highestChildIndex + 1; // Start after the highest existing index
-    const newEndDate = new Date(task.endDate);
-    
-    while (nextDate <= newEndDate) {
-      const dueISO = nextDate.toISOString().split('T')[0];
-      
-      // FIXED: Place desc: "" after the spread to ensure it overrides
-      newChildTasks.push(new Task({
-        ...task,
-        id: parentId * 1000 + childIndex,
-        parentId: parentId,
-        due: dueISO,
-        status: "due",
-        desc: "" // Empty description - place AFTER spread to override
-      }));
-      
-      nextDate.setDate(nextDate.getDate() + task.frequency);
-      childIndex++;
-    }
-    
-    // Update all tasks in memory with the new end date
-    tasks.forEach(task_item => {
-      if (task_item.id === parentId || task_item.parentId === parentId) {
-        task_item.endDate = task.endDate;
+  static async removeSurplusChildren(motherTask, tasks, existingChildren, numberToRemove) {
+    const motherId = motherTask.id;
+    // Children are sorted by due date ascending; remove the last `numberToRemove`
+    const childrenToRemove = existingChildren.slice(-numberToRemove).map(c => c.id);
+    const filteredTasks = tasks.filter(t => !childrenToRemove.includes(t.id));
+
+    // Also update the mother's count (already set in task)
+    const success = await window.saveTasks(filteredTasks);
+    if (success) await window.refreshAllUI();
+    return { success, tasks: filteredTasks, shouldContinue: false };
+  }
+
+  /**
+   * Regenerate all child tasks when frequency or mother's due date changes
+   */
+  static async handleRegeneration(motherTask, tasks, currentFamily, oldMotherSnapshot) {
+    const motherId = motherTask.id;
+    const interval = motherTask.frequency;
+    const count = motherTask.count; // total tasks including mother
+    const startDue = new Date(motherTask.due);
+
+    // Build a map of existing children by due date for preserving status/desc
+    const childrenByDue = new Map();
+    currentFamily.forEach(member => {
+      if (member.id !== motherId && member.due) {
+        childrenByDue.set(member.due, { status: member.status, desc: member.desc });
       }
     });
-    
-    // Add the new tasks to the existing ones
-    const success = await window.saveTasks([...tasks, ...newChildTasks]);
-    
-    if (success) {
-      await window.refreshAllUI();
-    }
-    return { success, tasks: [...tasks, ...newChildTasks], shouldContinue: false };
-  }
 
-  /**
-   * Handle parameter changes for periodic tasks
-   */
-  static async handleParameterChanges(task, tasks, originalMotherTask) {
-    const parentId = originalMotherTask.id;
-    
-    const groupTasks = tasks.filter(t => t.parentId === parentId || t.id === parentId);
-    
-    const newTasks = tasks.filter(t => !groupTasks.some(gt => gt.id === t.id));
-  
-    let currentDue = new Date(originalMotherTask.due);
-    const endDate = new Date(task.endDate);
-    
-    const batch = [];
-    let childIndex = 1;
-
-    // For the first task (mother task), preserve its current status and desc
-    const motherTask = groupTasks.find(t => t.id === originalMotherTask.id);
-    const motherStatus = motherTask ? motherTask.status : originalMotherTask.status;
-    const motherDesc = motherTask ? motherTask.desc : originalMotherTask.desc;
-
-    while (currentDue <= endDate) {
+    // Generate new sequence
+    const newFamily = [motherTask]; // mother already updated
+    let currentDue = new Date(startDue);
+    for (let i = 1; i < count; i++) {
+      currentDue.setDate(currentDue.getDate() + interval);
       const dueISO = currentDue.toISOString().split('T')[0];
-      
-      // Find if this date already had a task in the old sequence
-      const existingTask = groupTasks.find(t => t.due === dueISO);
-      
-      const newTaskId = batch.length === 0 ? originalMotherTask.id : originalMotherTask.id * 1000 + childIndex;
-      const newTaskStatus = batch.length === 0 ? motherStatus : (existingTask ? existingTask.status : "due");
-      const newTaskDesc = batch.length === 0 ? motherDesc : (existingTask ? existingTask.desc : "");
-      
-      batch.push(new Task({
-        ...task,
-        id: newTaskId,
-        parentId: originalMotherTask.id,
+      const childId = motherId * 1000 + i;
+
+      // Check if we had a child with this due date before
+      const oldChild = childrenByDue.get(dueISO);
+      const status = oldChild ? oldChild.status : "due";
+      const desc = oldChild ? oldChild.desc : "";
+
+      newFamily.push(new Task({
+        ...motherTask,
+        id: childId,
+        parentId: motherId,
         due: dueISO,
-        title: task.title,
-        // Preserve individual status and description when possible
-        status: newTaskStatus,
-        desc: newTaskDesc
+        status: status,
+        desc: desc
       }));
-      
-      currentDue.setDate(currentDue.getDate() + originalMotherTask.frequency);
-      childIndex++;
     }
-    
-    const success = await window.saveTasks([...newTasks, ...batch]);
-    
-    if (success) {
-      await window.refreshAllUI();
-    }
-    return { success, tasks: [...newTasks, ...batch], shouldContinue: false };
+
+    // Remove all old family members (except mother) and add new ones
+    const filteredTasks = tasks.filter(t => t.id !== motherId && t.parentId !== motherId);
+    const updatedTasks = [...filteredTasks, ...newFamily];
+
+    const success = await window.saveTasks(updatedTasks);
+    if (success) await window.refreshAllUI();
+    return { success, tasks: updatedTasks, shouldContinue: false };
   }
 
   /**
-   * Check if parameters have changed for periodic task
-   */
-  static parametersChanged(task, originalTask) {
-    // Check if this IS the mother task and being directly edited
-    const isMotherTask = task.id === originalTask.id && !task.parentId;
-    
-    // For mother tasks, compare against the STORED values rather than runtime values
-    const changedParams = ['title', 'due', 'endDate', 'frequency'].filter(prop => {
-      const oldValue = originalTask[prop];
-      const newValue = task[prop];
-      const changed = oldValue !== newValue;
-      
-      return changed;
-    });
-    
-    // Return true if any parameters changed OR if this is a mother task with endDate change
-    return changedParams.length > 0 || (isMotherTask && task.endDate !== originalTask.endDate);
-  }
-
-  /**
-   * Handle periodic task deletion
-   * @param {Task} task - The task to delete
-   * @param {Array} tasks - All tasks array
-   * @returns {Object} - {success: boolean, tasks: Array}
+   * Handle periodic task deletion (same as before)
    */
   static async handlePeriodicTaskDelete(task, tasks) {
     const parentIdToDelete = task.parentId || task.id;
-    
-    // Find all tasks in the group (including parent and children)
-    const tasksToDelete = tasks.filter(t => 
-      t.parentId === parentIdToDelete || t.id === parentIdToDelete
-    );
-
-    // Remove all group members
-    const filteredTasks = tasks.filter(t => 
-      !tasksToDelete.some(d => d.id === t.id)
-    );
-
+    const tasksToDelete = tasks.filter(t => t.parentId === parentIdToDelete || t.id === parentIdToDelete);
+    const filteredTasks = tasks.filter(t => !tasksToDelete.some(d => d.id === t.id));
     const success = await window.saveTasks(filteredTasks);
-       
     if (success) {
       await window.refreshAllUI();
       return { success: true, tasks: filteredTasks };
     }
     return { success: false, tasks };
+  }
+
+  /**
+   * Check if parameters have changed (legacy method, may not be used)
+   */
+  static parametersChanged(task, originalTask) {
+    // Not used in new logic, kept for compatibility
+    return false;
   }
 }
 

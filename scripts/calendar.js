@@ -91,6 +91,10 @@ function initCalendar() {
    // New line for event delegation
   calGrid.addEventListener("click", handleCalendarClick);
   
+    calGrid.addEventListener("dragover", handleDragOver);
+  calGrid.addEventListener("drop", handleDrop);
+  calGrid.addEventListener("dragend", handleDragEnd);
+  
   // Load tasks FIRST before rendering
   loadTasks().then(() => {
     renderCalendarGrid();
@@ -257,6 +261,12 @@ function renderCalendarGrid(tasksToRender) {
           });
         }
         // --- END NEW ---
+		
+		        // --- DRAG & DROP: make non‑periodic tasks draggable ---
+        if (task.type !== 'periodic task') {
+          taskElement.draggable = true;
+          taskElement.addEventListener('dragstart', handleDragStart);
+        }
 
         dayCell.appendChild(taskElement);
       });
@@ -323,6 +333,122 @@ function getTodayDateString() {
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const day = String(today.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+// =============================================
+// DRAG & DROP IMPLEMENTATION
+// =============================================
+
+// Auto‑scroll while dragging near window edges
+let dragScrollRaf = null;
+
+function doAutoScroll(clientY) {
+  const scrollMargin = 50;        // pixels from edge to start scrolling
+  const scrollStep = 10;          // pixels to scroll per frame
+  const viewportHeight = window.innerHeight;
+
+  if (clientY < scrollMargin) {
+    // scroll up
+    window.scrollBy(0, -scrollStep);
+    dragScrollRaf = requestAnimationFrame(() => doAutoScroll(clientY));
+  } else if (clientY > viewportHeight - scrollMargin) {
+    // scroll down
+    window.scrollBy(0, scrollStep);
+    dragScrollRaf = requestAnimationFrame(() => doAutoScroll(clientY));
+  } else {
+    // stop scrolling if already scrolling
+    if (dragScrollRaf) {
+      cancelAnimationFrame(dragScrollRaf);
+      dragScrollRaf = null;
+    }
+  }
+}
+
+// Drag start – only for non‑periodic tasks
+function handleDragStart(event) {
+  const taskEl = event.target.closest('.calendar__task');
+  if (!taskEl) return;
+
+  // Prevent dragging periodic tasks (just in case, but they aren't draggable)
+  if (taskEl.classList.contains('task-type--periodic-task')) {
+    event.preventDefault();
+    return;
+  }
+
+  // Store the task ID in the drag data
+  const taskId = taskEl.dataset.taskId;
+  event.dataTransfer.setData('text/plain', taskId);
+  event.dataTransfer.effectAllowed = 'move';
+
+  // Optional: remove any default drag ghost styling if you like
+  // event.dataTransfer.setDragImage(new Image(), 0, 0);
+}
+
+// Dragover – highlight drop target and auto‑scroll
+function handleDragOver(event) {
+  event.preventDefault();               // necessary to allow drop
+  event.dataTransfer.dropEffect = 'move';
+
+  // Highlight the day cell under the mouse
+  const dayCell = event.target.closest('.calendar__day');
+  if (dayCell && !dayCell.classList.contains('--empty')) {
+    dayCell.classList.add('drag-over');
+  }
+
+  // Auto‑scroll logic
+  const clientY = event.clientY;
+  if (dragScrollRaf) cancelAnimationFrame(dragScrollRaf);
+  dragScrollRaf = requestAnimationFrame(() => doAutoScroll(clientY));
+}
+
+// Drop – change the due date and save
+async function handleDrop(event) {
+  event.preventDefault();
+  // Remove highlight from all day cells
+  document.querySelectorAll('.calendar__day.drag-over').forEach(el => {
+    el.classList.remove('drag-over');
+  });
+
+  // Get the dropped task ID
+  const taskId = event.dataTransfer.getData('text/plain');
+  if (!taskId) return;
+
+  // Find the target day cell
+  const targetDay = event.target.closest('.calendar__day');
+  if (!targetDay || targetDay.classList.contains('--empty')) return;
+
+  const newDate = targetDay.dataset.date;
+  if (!newDate) return;
+
+  // Find the task in the global store
+  const task = window.taskStore.find(t => String(t.id) === taskId);
+  if (!task) return;
+
+  // Double‑check it's not a periodic task (safety)
+  if (task.type === 'periodic task') {
+    console.warn('Periodic tasks cannot be moved by drag & drop.');
+    return;
+  }
+
+  // Update the due date
+  task.due = newDate;
+
+  // Save the task – this will automatically refresh the UI
+  await task.save();
+}
+
+// Drag end – clean up highlights and stop auto‑scroll
+function handleDragEnd(event) {
+  // Remove all drag-over highlights
+  document.querySelectorAll('.calendar__day.drag-over').forEach(el => {
+    el.classList.remove('drag-over');
+  });
+
+  // Stop any ongoing auto‑scroll
+  if (dragScrollRaf) {
+    cancelAnimationFrame(dragScrollRaf);
+    dragScrollRaf = null;
+  }
 }
 
 // Expose function to refresh calendar

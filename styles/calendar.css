@@ -168,3 +168,9 @@
 .calendar__task.task-status--done.calendar__task--family-hover {
   background-color: var(--done-task-border); /* matches :hover of done tasks */
 }
+
+/* Drag & drop highlight */
+.calendar__day.drag-over {
+  background-color: rgba(0, 120, 255, 0.1);
+  border: 2px dashed #0078ff;
+}

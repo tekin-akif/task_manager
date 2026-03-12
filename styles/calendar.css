@@ -157,3 +157,14 @@
 .task-type--reminder:hover {
   background-color: var(--day-cell-background);            /* reminder daha özelliksiz, hızlı bir not gibi */ 
 }
+
+/* Family hover for periodic tasks – uses same colors as status hover */
+.calendar__task.task-status--due.calendar__task--family-hover {
+  background-color: var(--due-task-border);  /* matches :hover of due tasks */
+}
+.calendar__task.task-status--late.calendar__task--family-hover {
+  background-color: var(--late-task-border); /* matches :hover of late tasks */
+}
+.calendar__task.task-status--done.calendar__task--family-hover {
+  background-color: var(--done-task-border); /* matches :hover of done tasks */
+}

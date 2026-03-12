@@ -118,7 +118,6 @@ async function loadTasks() {
 }
 
 // Render the calendar grid
-// Updated renderCalendarGrid function
 function renderCalendarGrid(tasksToRender) {
   // Use fresh tasks if provided, otherwise use cached tasks
   const currentTasks = Array.isArray(tasksToRender) ? tasksToRender : window.taskStore;
@@ -134,7 +133,7 @@ function renderCalendarGrid(tasksToRender) {
   // Get calendar data
   const { calendarMonths } = generateCalendarData();
   
-  // Loop through each month (including Dec of prev year and Jan of next year)
+  // Loop through each month
   calendarMonths.forEach((monthData) => {
     const { name: month, monthIndex, year } = monthData;
     
@@ -142,19 +141,17 @@ function renderCalendarGrid(tasksToRender) {
     const monthSection = document.createElement("div");
     monthSection.className = "calendar__month";
 
-    // Add month header with year if it's December or January (to clarify the year) ---değiştirildi, bu eski sistemdi
+    // Add month header with year
     const monthHeader = document.createElement("h2");
     monthHeader.className = "calendar__header";
-
     monthHeader.textContent = `${month} ${year}`;
-
     monthSection.appendChild(monthHeader);
 
     // Create month grid
     const monthGrid = document.createElement("div");
     monthGrid.className = "calendar__grid";
 
-    // Add day labels (Mon, Tue, ..., Sun)
+    // Add day labels
     DAYS.forEach(day => {
       const dayLabel = document.createElement("div");
       dayLabel.className = "calendar__day-label";
@@ -162,9 +159,9 @@ function renderCalendarGrid(tasksToRender) {
       monthGrid.appendChild(dayLabel);
     });
 
-    // Add empty cells for days before the first day of the month
+    // Add empty cells for days before first day of month
     const firstDayOfMonth = new Date(year, monthIndex, 1).getDay();
-    const emptyCells = (firstDayOfMonth + 6) % 7; // Adjust for Monday as the first day
+    const emptyCells = (firstDayOfMonth + 6) % 7;
     for (let i = 0; i < emptyCells; i++) {
       const emptyCell = document.createElement("div");
       emptyCell.className = "calendar__day --empty";
@@ -177,49 +174,38 @@ function renderCalendarGrid(tasksToRender) {
       const dayCell = document.createElement("div");
       dayCell.className = "calendar__day";
       
-      // Format date with the correct year
       const dateKey = `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
       dayCell.dataset.date = dateKey;
       
-      // Check if this cell is today and add special class if it is
       if (dateKey === getTodayDateString()) {
         dayCell.classList.add("calendar__day--today");
       }
 
-      // Add day header with formatted date
       const dayHeader = document.createElement("div");
       dayHeader.className = "calendar__day-header";
       
-      // Format the date as "01 Jan 2025" with the correct year
       const formattedDay = String(day).padStart(2, '0');
       const formattedMonth = month.substring(0, 3);
       dayHeader.textContent = `${formattedDay} ${formattedMonth} ${year}`;
       
       dayCell.appendChild(dayHeader);
 
-      // The rest of your code for rendering tasks remains the same
+      // Get tasks for this day
       const tasksForDay = currentTasks
         .filter(task => task.due === dayCell.dataset.date)
         .sort((a, b) => {
-          const typePriority = {
-            reminder: 0,
-            "periodic task": 1
-          };
-
+          const typePriority = { reminder: 0, "periodic task": 1 };
           const aType = typePriority[a.type] ?? 2;
           const bType = typePriority[b.type] ?? 2;
-
           return aType - bType;
         });
       
       tasksForDay.forEach(task => {
-        // Your existing task rendering code...
         const taskElement = document.createElement("div");
         taskElement.className = `calendar__task task-type--${task.type.toLowerCase().replace(/ /g, '-')} task-status--${task.status}`;
         
-        // Your icon insertion code...
+        // Add icons
         taskElement.textContent = "";
-        
         if (task.type === "periodic task") {
           if (task.id === task.parentId) {
             const motherIcon = document.createElement("img");
@@ -228,7 +214,6 @@ function renderCalendarGrid(tasksToRender) {
             motherIcon.alt = "Mother";
             taskElement.appendChild(motherIcon);
           }
-          
           const periodicIcon = document.createElement("img");
           periodicIcon.src = ICONS.PERIODIC;
           periodicIcon.className = "task-icon";
@@ -252,6 +237,27 @@ function renderCalendarGrid(tasksToRender) {
         taskElement.appendChild(titleText);
         
         taskElement.dataset.taskId = task.id;
+
+        // --- NEW: Family hover for periodic tasks ---
+        if (task.type === "periodic task") {
+          const familyId = task.parentId || task.id; // mother's ID
+          taskElement.dataset.familyId = familyId;
+
+          // Add hover listeners to highlight whole family
+          taskElement.addEventListener('mouseenter', () => {
+            document.querySelectorAll(`[data-family-id="${familyId}"]`).forEach(el => {
+              el.classList.add('calendar__task--family-hover');
+            });
+          });
+
+          taskElement.addEventListener('mouseleave', () => {
+            document.querySelectorAll(`[data-family-id="${familyId}"]`).forEach(el => {
+              el.classList.remove('calendar__task--family-hover');
+            });
+          });
+        }
+        // --- END NEW ---
+
         dayCell.appendChild(taskElement);
       });
 

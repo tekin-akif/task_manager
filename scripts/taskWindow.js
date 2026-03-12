@@ -15,7 +15,7 @@ class TaskWindow {
     this.saveBtn = document.createElement("button");
     this.overlay = document.createElement("div");
     this.countInput = document.createElement("input");
-    this.frequencySelect = document.createElement("select");
+    this.frequencySelect = document.createElement("input");
 
     // Class setup
     this.modal.className = "task-window";
@@ -55,11 +55,13 @@ class TaskWindow {
     this.countInput.placeholder = "1-99";
     this.countInput.value = "1";
 
-    // Configure frequency dropdown (interval in days)
-    this.frequencySelect.innerHTML = 
-      [1, 2, 3, 4, 5, 6, 7, 10, 15, 20, 30].map(n => 
-        `<option value="${n}">${n} days</option>`
-      ).join('');
+    // Configure frequency (interval in days)
+this.frequencySelect.type = "number";
+this.frequencySelect.min = "1";
+this.frequencySelect.max = "99";
+this.frequencySelect.step = "1";
+this.frequencySelect.placeholder = "1-99";
+this.frequencySelect.value = "1";
 
     // Form structure
     this.form.appendChild(this.taskIdInput);

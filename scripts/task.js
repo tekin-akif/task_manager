@@ -61,10 +61,10 @@ class Task {
   }
 
   async save() {
-    if (this.due && !["done"].includes(this.status)) {
-      const oldStatus = this.status;
-      this.status = this.isOverdue(this.due) ? "late" : this.status;
-    }
+	  
+  if (this.due && !["done"].includes(this.status)) {
+  this.status = this.isOverdue(this.due) ? "late" : "due";
+}
 
     if (!this.validate()) {
       return false;

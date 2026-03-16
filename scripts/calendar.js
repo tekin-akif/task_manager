@@ -91,7 +91,7 @@ function initCalendar() {
    // New line for event delegation
   calGrid.addEventListener("click", handleCalendarClick);
   
-    calGrid.addEventListener("dragover", handleDragOver);
+  document.addEventListener("dragover", handleDragOver);
   calGrid.addEventListener("drop", handleDrop);
   calGrid.addEventListener("dragend", handleDragEnd);
   
@@ -389,7 +389,12 @@ function handleDragOver(event) {
   event.preventDefault();               // necessary to allow drop
   event.dataTransfer.dropEffect = 'move';
 
-  // Highlight the day cell under the mouse
+  // Remove highlight from all day cells first
+  document.querySelectorAll('.calendar__day.drag-over').forEach(el => {
+    el.classList.remove('drag-over');
+  });
+
+  // Highlight the day cell under the mouse, if any
   const dayCell = event.target.closest('.calendar__day');
   if (dayCell && !dayCell.classList.contains('--empty')) {
     dayCell.classList.add('drag-over');

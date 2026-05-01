@@ -103,11 +103,15 @@ this.frequencySelect.value = "1";
       this.dateInput.disabled = isChildTask;
       this.countInput.disabled = isChildTask;
       this.frequencySelect.disabled = isChildTask;
+	  this.titleInput.disabled = isChildTask;
+      this.typeSelect.disabled = isChildTask;
     } else {
       // Non-periodic: due date always enabled, count/interval always disabled
       this.dateInput.disabled = false;
       this.countInput.disabled = true;
       this.frequencySelect.disabled = true;
+	  this.titleInput.disabled = false;
+      this.typeSelect.disabled = false;
     }
 
     // Status field: disabled for reminders, and also disabled if no due date (planning mode)
